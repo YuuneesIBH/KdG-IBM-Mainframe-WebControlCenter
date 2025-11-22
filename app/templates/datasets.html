@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Datasets - KdG Mainframe{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/datasets.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h1 class="display-4 fw-bold mb-2">
+            <i class="bi bi-folder2-open text-gradient glow"></i>
+            Dataset Browser
+        </h1>
+        <p class="text-muted fs-5">Browse and manage your mainframe datasets</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="search-bar">
+                    <i class="bi bi-search"></i>
+                    <input 
+                        type="text" 
+                        id="hlqInput" 
+                        placeholder="Enter HLQ (e.g., ZUSER or ZUSER.PUBLIC)"
+                        value="ZUSER"
+                    >
+                    <button class="btn-primary-custom" id="searchBtn">
+                        <i class="bi bi-search"></i>
+                        Search Datasets
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    
+    <div class="col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body position-relative">
+                <div class="stat-label">
+                    <i class="bi bi-folder2-open me-2"></i>Total Datasets
+                </div>
+                <div class="stat-value text-gradient" id="totalDatasets">0</div>
+                <div class="text-muted small">Available datasets</div>
+                <i class="bi bi-folder2-open stat-icon" style="color: var(--primary);"></i>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="text-decoration-none" id="scrollToDatasets">
+                    <span style="color: var(--primary);">View datasets</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body position-relative">
+                <div class="stat-label">
+                    <i class="bi bi-layers me-2"></i>PDS Libraries
+                </div>
+                <div class="stat-value" style="color: var(--success);" id="totalPds">0</div>
+                <div class="text-muted small">Partitioned datasets</div>
+                <i class="bi bi-layers stat-icon" style="color: var(--success);"></i>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="text-decoration-none">
+                    <span style="color: var(--success);">Browse PDS</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body position-relative">
+                <div class="stat-label">
+                    <i class="bi bi-file-earmark me-2"></i>Sequential Files
+                </div>
+                <div class="stat-value" style="color: var(--info);" id="totalSeq">0</div>
+                <div class="text-muted small">Sequential datasets</div>
+                <i class="bi bi-file-earmark stat-icon" style="color: var(--info);"></i>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="text-decoration-none">
+                    <span style="color: var(--info);">View sequential</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4">
+    
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul" style="color: var(--primary);"></i>
+                    <span id="datasetHeader">Datasets</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                
+                <div id="loadingState" class="text-center py-5">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="text-muted">Loading datasets...</p>
+                </div>
+
+                <div id="emptyState" class="text-center py-5" style="display: none;">
+                    <i class="bi bi-folder2-open" style="font-size: 4rem; color: var(--text-muted); opacity: 0.3;"></i>
+                    <h4 class="mt-3">No Datasets Found</h4>
+                    <p class="text-muted">Enter an HLQ and click Search to browse datasets</p>
+                </div>
+
+                <div id="errorState" class="text-center py-5" style="display: none;">
+                    <i class="bi bi-exclamation-triangle" style="font-size: 4rem; color: var(--danger); opacity: 0.5;"></i>
+                    <h4 class="mt-3">Error Loading Datasets</h4>
+                    <p class="text-muted" id="errorMessage"></p>
+                    <button class="btn-primary-custom" onclick="loadDatasets()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        Try Again
+                    </button>
+                </div>
+
+                <div id="datasetList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-code" style="color: var(--secondary);"></i>
+                    <span id="membersTitle">Members</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                
+                <div id="membersEmptyState" class="text-center py-5">
+                    <i class="bi bi-file-code" style="font-size: 4rem; color: var(--text-muted); opacity: 0.3;"></i>
+                    <h4 class="mt-3">Select a PDS</h4>
+                    <p class="text-muted">Click on a PDS library to view its members</p>
+                </div>
+
+                <div id="membersList"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/datasets.js') }}"></script>
+{% endblock %}
