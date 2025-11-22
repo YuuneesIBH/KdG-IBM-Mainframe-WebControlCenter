@@ -2,7 +2,7 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
-    MOCK_MODE = os.environ.get('MOCK_MODE', 'True') == 'True'
+    MOCK_MODE = os.environ.get('MOCK_MODE', 'True').lower() in ['true', '1', 'yes']
     ZOS_HOST = os.environ.get('ZOS_HOST')
     ZOS_PORT = os.environ.get('ZOS_PORT')
     ZOS_USER = os.environ.get('ZOS_USER')
@@ -20,7 +20,6 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    MOCK_MODE = True
 
 class ProductionConfig(Config):
     DEBUG = False

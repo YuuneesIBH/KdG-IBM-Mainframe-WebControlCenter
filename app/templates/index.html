@@ -21,7 +21,9 @@
                 <div class="stat-label">
                     <i class="bi bi-folder2-open me-2"></i>Datasets
                 </div>
-                <div class="stat-value text-gradient">45</div>
+                <div class="stat-value text-gradient" id="datasets-count">
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                </div>
                 <div class="text-muted small">Available PDSs</div>
                 <i class="bi bi-folder2-open stat-icon" style="color: var(--primary);"></i>
             </div>
@@ -40,7 +42,9 @@
                 <div class="stat-label">
                     <i class="bi bi-play-circle me-2"></i>Jobs
                 </div>
-                <div class="stat-value" style="color: var(--success);">12</div>
+                <div class="stat-value" style="color: var(--success);" id="jobs-count">
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                </div>
                 <div class="text-muted small">Submitted today</div>
                 <i class="bi bi-play-circle stat-icon" style="color: var(--success);"></i>
             </div>
@@ -59,7 +63,9 @@
                 <div class="stat-label">
                     <i class="bi bi-terminal me-2"></i>USS Files
                 </div>
-                <div class="stat-value" style="color: var(--info);">89</div>
+                <div class="stat-value" style="color: var(--info);" id="uss-count">
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                </div>
                 <div class="text-muted small">Files tracked</div>
                 <i class="bi bi-terminal stat-icon" style="color: var(--info);"></i>
             </div>
@@ -78,7 +84,9 @@
                 <div class="stat-label">
                     <i class="bi bi-file-code me-2"></i>Scripts
                 </div>
-                <div class="stat-value" style="color: var(--warning);">23</div>
+                <div class="stat-value" style="color: var(--warning);" id="scripts-count">
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                </div>
                 <div class="text-muted small">Ready to execute</div>
                 <i class="bi bi-file-code stat-icon" style="color: var(--warning);"></i>
             </div>
@@ -264,5 +272,35 @@
         </div>
     </div>
 </div>
+
+<script>
+async function loadDashboardData() {
+    try {
+        const response = await fetch('/api/dashboard');
+        
+        if (!response.ok) {
+            throw new Error('Failed to load dashboard data');
+        }
+        
+        const data = await response.json();
+        
+        document.getElementById('datasets-count').textContent = data.datasets || 0;
+        document.getElementById('jobs-count').textContent = data.jobs_today || 0;
+        document.getElementById('uss-count').textContent = data.uss_files || 0;
+        document.getElementById('scripts-count').textContent = data.scripts || 0;
+        
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        
+        document.getElementById('datasets-count').innerHTML = '<i class="bi bi-exclamation-triangle text-danger"></i>';
+        document.getElementById('jobs-count').innerHTML = '<i class="bi bi-exclamation-triangle text-danger"></i>';
+        document.getElementById('uss-count').innerHTML = '<i class="bi bi-exclamation-triangle text-danger"></i>';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadDashboardData);
+
+setInterval(loadDashboardData, 30000);
+</script>
 
 {% endblock %}
