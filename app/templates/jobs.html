@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Jobs - KdG Mainframe{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jobs.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h1 class="display-4 fw-bold mb-2">
+            <i class="bi bi-clock-history text-gradient glow"></i>
+            Job Monitor
+        </h1>
+        <p class="text-muted fs-5">Monitor and manage your mainframe jobs</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="job-search-bar">
+                    <i class="bi bi-search"></i>
+                    <input 
+                        type="text" 
+                        id="ownerInput" 
+                        placeholder="Owner (e.g., ZUSER or *)"
+                        value="*"
+                    >
+                    <input 
+                        type="text" 
+                        id="prefixInput" 
+                        placeholder="Job prefix (e.g., JOB* or *)"
+                        value="*"
+                    >
+                    <select id="statusFilter">
+                        <option value="ALL">All Status</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="INPUT">Input</option>
+                        <option value="OUTPUT" selected>Output</option>
+                        <option value="ABEND">Abend</option>
+                    </select>
+                    <button class="btn-primary-custom" id="searchBtn">
+                        <i class="bi bi-search"></i>
+                        Search Jobs
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    
+    <div class="col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body position-relative">
+                <div class="stat-label">
+                    <i class="bi bi-list-check me-2"></i>Total Jobs
+                </div>
+                <div class="stat-value text-gradient" id="totalJobs">0</div>
+                <div class="text-muted small">In the system</div>
+                <i class="bi bi-list-check stat-icon" style="color: var(--primary);"></i>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="text-decoration-none">
+                    <span style="color: var(--primary);">View all jobs</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body position-relative">
+                <div class="stat-label">
+                    <i class="bi bi-play-circle me-2"></i>Active Jobs
+                </div>
+                <div class="stat-value" style="color: var(--success);" id="activeJobs">0</div>
+                <div class="text-muted small">Currently running</div>
+                <i class="bi bi-play-circle stat-icon" style="color: var(--success);"></i>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="text-decoration-none">
+                    <span style="color: var(--success);">Monitor active</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body position-relative">
+                <div class="stat-label">
+                    <i class="bi bi-check-circle me-2"></i>Completed Jobs
+                </div>
+                <div class="stat-value" style="color: var(--info);" id="completedJobs">0</div>
+                <div class="text-muted small">In output queue</div>
+                <i class="bi bi-check-circle stat-icon" style="color: var(--info);"></i>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="text-decoration-none">
+                    <span style="color: var(--info);">View output</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4">
+    
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul" style="color: var(--primary);"></i>
+                    Jobs List
+                </h5>
+            </div>
+            <div class="card-body">
+                
+                <div id="loadingState" class="text-center py-5">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="text-muted">Loading jobs...</p>
+                </div>
+
+                <div id="emptyState" class="text-center py-5" style="display: none;">
+                    <i class="bi bi-inbox" style="font-size: 4rem; color: var(--text-muted); opacity: 0.3;"></i>
+                    <h4 class="mt-3">No Jobs Found</h4>
+                    <p class="text-muted">No jobs match your search criteria</p>
+                </div>
+
+                <div id="errorState" class="text-center py-5" style="display: none;">
+                    <i class="bi bi-exclamation-triangle" style="font-size: 4rem; color: var(--danger); opacity: 0.5;"></i>
+                    <h4 class="mt-3">Error Loading Jobs</h4>
+                    <p class="text-muted" id="errorMessage"></p>
+                    <button class="btn-primary-custom" onclick="loadJobs()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        Try Again
+                    </button>
+                </div>
+
+                <div id="jobsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle" style="color: var(--secondary);"></i>
+                    Job Details
+                </h5>
+            </div>
+            <div class="card-body">
+                
+                <div id="detailsEmptyState" class="text-center py-5">
+                    <i class="bi bi-card-list" style="font-size: 4rem; color: var(--text-muted); opacity: 0.3;"></i>
+                    <h4 class="mt-3">Select a Job</h4>
+                    <p class="text-muted">Click on a job to view its details and spool files</p>
+                </div>
+
+                <div id="jobDetails" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/jobs.js') }}"></script>
+{% endblock %}

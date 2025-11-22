@@ -9,6 +9,14 @@ def init_routes(app):
     def datasets():
         return render_template("datasets.html")
     
+    @app.route("/jobs")
+    def jobs():
+        return render_template("jobs.html")
+    
+    @app.route("/uss")
+    def uss():
+        return render_template("uss.html")
+    
     @app.route("/api/health")
     def api_health():
         return jsonify({
