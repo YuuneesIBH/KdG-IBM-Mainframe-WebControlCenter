@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Editor - KdG Mainframe{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/editor.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="editor-header">
+            <div class="editor-info">
+                <div class="editor-dataset-name" id="datasetName">No dataset selected</div>
+                <div class="editor-member-name">
+                    <i class="bi bi-file-code"></i>
+                    <span id="memberName">No member selected</span>
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button class="btn-secondary-custom" onclick="window.location.href='/datasets'">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to Datasets
+                </button>
+                <button class="btn-primary-custom" onclick="showNewMemberModal()">
+                    <i class="bi bi-file-plus"></i>
+                    New Member
+                </button>
+                <button class="btn-primary-custom" id="saveBtn" onclick="saveMember()" disabled>
+                    <i class="bi bi-save"></i>
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-3">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul" style="color: var(--primary);"></i>
+                    Members
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input 
+                        type="text" 
+                        id="memberSearch" 
+                        placeholder="Search members..."
+                        oninput="searchMembers()"
+                    >
+                </div>
+                
+                <div class="member-sidebar" id="membersList">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="text-muted">Loading members...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <div class="card h-100">
+            <div class="card-body p-0">
+                <div class="editor-container">
+                    <div class="editor-toolbar">
+                        <div class="editor-toolbar-left">
+                            <button class="editor-tool-btn" id="lineNumbersBtn" onclick="toggleLineNumbers()" title="Toggle Line Numbers">
+                                <i class="bi bi-list-ol"></i>
+                            </button>
+                            <button class="editor-tool-btn" id="wordWrapBtn" onclick="toggleWordWrap()" title="Toggle Word Wrap">
+                                <i class="bi bi-text-wrap"></i>
+                            </button>
+                            <select class="editor-tool-btn" id="fontSizeSelect" onchange="changeFontSize(this.value)" title="Font Size">
+                                <option value="12">12px</option>
+                                <option value="14" selected>14px</option>
+                                <option value="16">16px</option>
+                                <option value="18">18px</option>
+                                <option value="20">20px</option>
+                            </select>
+                        </div>
+                        <div class="editor-toolbar-right">
+                            <div class="editor-status">
+                                <span id="saveStatus">
+                                    <i class="bi bi-check-circle-fill saved"></i> Saved
+                                </span>
+                                <span id="saveIndicator"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="position: relative;">
+                        <div class="line-numbers" id="lineNumbers"></div>
+                        <textarea id="codeEditor" placeholder="Select a member to start editing..." spellcheck="false"></textarea>
+                    </div>
+                </div>
+
+                <div class="settings-panel mt-3">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="setting-group">
+                                <label class="setting-label">Auto-Save</label>
+                                <div class="setting-description">Automatically save changes every 30 seconds</div>
+                                <div class="setting-control">
+                                    <div class="toggle-switch" id="autoSaveToggle" onclick="toggleAutoSave()"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="shortcuts-help">
+                                <h6><i class="bi bi-keyboard"></i> Keyboard Shortcuts</h6>
+                                <div class="shortcut-item">
+                                    <span>Save</span>
+                                    <span class="shortcut-key">Ctrl + S</span>
+                                </div>
+                                <div class="shortcut-item">
+                                    <span>New Member</span>
+                                    <span class="shortcut-key">Ctrl + N</span>
+                                </div>
+                                <div class="shortcut-item">
+                                    <span>Find</span>
+                                    <span class="shortcut-key">Ctrl + F</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="newMemberModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Create New Member</h5>
+            <button class="modal-close" onclick="closeModal('newMemberModal')">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Member Name</label>
+                <div class="setting-description">Must be 1-8 characters (A-Z, 0-9, @, #, $)</div>
+                <input 
+                    type="text" 
+                    id="newMemberName" 
+                    class="form-input" 
+                    placeholder="e.g., MEMBER01"
+                    maxlength="8"
+                    style="text-transform: uppercase;"
+                >
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary-custom" onclick="closeModal('newMemberModal')">
+                Cancel
+            </button>
+            <button class="btn-primary-custom" onclick="createNewMember()">
+                <i class="bi bi-file-plus"></i>
+                Create Member
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+{% endblock %}

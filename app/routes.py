@@ -9,6 +9,10 @@ def init_routes(app):
     def datasets():
         return render_template("datasets.html")
     
+    @app.route("/editor")
+    def editor():
+        return render_template("editor.html")
+    
     @app.route("/jobs")
     def jobs():
         return render_template("jobs.html")
