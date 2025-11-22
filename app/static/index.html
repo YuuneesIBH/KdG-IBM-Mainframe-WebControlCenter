@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - KdG Mainframe{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h1 class="display-4 fw-bold mb-2">
+            <i class="bi bi-speedometer2 text-gradient glow"></i>
+            Dashboard
+        </h1>
+        <p class="text-muted fs-5">Welcome back to the KdG Mainframe Control Center</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row g-4 mb-5">
+    
+    <!-- Datasets Card -->
+    <div class="col-md-3">
+        <div class="card stat-card h-100">
+            <div class="card-body position-relative">
+                <div class="stat-label">
+                    <i class="bi bi-folder2-open me-2"></i>Datasets
+                </div>
+                <div class="stat-value text-gradient">45</div>
+                <div class="text-muted small">Available PDSs</div>
+                <i class="bi bi-folder2-open stat-icon" style="color: var(--primary);"></i>
+            </div>
+            <div class="card-footer">
+                <a href="/datasets" class="text-decoration-none">
+                    <span style="color: var(--primary);">Browse datasets</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jobs Card -->
+    <div class="col-md-3">
+        <div class="card stat-card h-100">
+            <div class="card-body position-relative">
+                <div class="stat-label">
+                    <i class="bi bi-play-circle me-2"></i>Jobs
+                </div>
+                <div class="stat-value" style="color: var(--success);">12</div>
+                <div class="text-muted small">Submitted today</div>
+                <i class="bi bi-play-circle stat-icon" style="color: var(--success);"></i>
+            </div>
+            <div class="card-footer">
+                <a href="/jobs" class="text-decoration-none">
+                    <span style="color: var(--success);">View jobs</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- USS Files Card -->
+    <div class="col-md-3">
+        <div class="card stat-card h-100">
+            <div class="card-body position-relative">
+                <div class="stat-label">
+                    <i class="bi bi-terminal me-2"></i>USS Files
+                </div>
+                <div class="stat-value" style="color: var(--info);">89</div>
+                <div class="text-muted small">Files tracked</div>
+                <i class="bi bi-terminal stat-icon" style="color: var(--info);"></i>
+            </div>
+            <div class="card-footer">
+                <a href="/uss" class="text-decoration-none">
+                    <span style="color: var(--info);">Browse USS</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Card -->
+    <div class="col-md-3">
+        <div class="card stat-card h-100">
+            <div class="card-body position-relative">
+                <div class="stat-label">
+                    <i class="bi bi-file-code me-2"></i>Scripts
+                </div>
+                <div class="stat-value" style="color: var(--warning);">23</div>
+                <div class="text-muted small">Ready to execute</div>
+                <i class="bi bi-file-code stat-icon" style="color: var(--warning);"></i>
+            </div>
+            <div class="card-footer">
+                <a href="/scripts" class="text-decoration-none">
+                    <span style="color: var(--warning);">Run scripts</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Main Content Grid -->
+<div class="row g-4 mb-5">
+    
+    <!-- Quick Actions -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightning-charge-fill" style="color: var(--warning);"></i>
+                    Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                
+                <a href="/datasets" class="action-link mb-3">
+                    <i class="bi bi-folder2-open" style="color: var(--primary);"></i>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">Browse Datasets</div>
+                        <small class="text-muted">Explore and manage your mainframe datasets</small>
+                    </div>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+
+                <a href="/editor" class="action-link mb-3">
+                    <i class="bi bi-file-code" style="color: var(--success);"></i>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">Open Editor</div>
+                        <small class="text-muted">Edit JCL, COBOL, REXX with syntax highlighting</small>
+                    </div>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+
+                <a href="/jobs" class="action-link mb-3">
+                    <i class="bi bi-play-circle" style="color: var(--info);"></i>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">Submit Job</div>
+                        <small class="text-muted">Submit JCL and monitor job execution</small>
+                    </div>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+
+                <a href="/uss" class="action-link">
+                    <i class="bi bi-terminal" style="color: var(--warning);"></i>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">USS Browser</div>
+                        <small class="text-muted">Navigate Unix System Services filesystem</small>
+                    </div>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock-history" style="color: var(--info);"></i>
+                    Recent Activity
+                </h5>
+            </div>
+            <div class="card-body">
+                
+                <div class="activity-item">
+                    <div class="activity-icon success">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Job TESTJOB completed successfully</div>
+                        <div class="activity-meta">
+                            Return Code: 0000 • 5 minutes ago
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon primary">
+                        <i class="bi bi-pencil-fill"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Edited Z83576.JCL(COMPILE)</div>
+                        <div class="activity-meta">
+                            Modified 15 lines • 12 minutes ago
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon warning">
+                        <i class="bi bi-play-fill"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Executed hello.rexx script</div>
+                        <div class="activity-meta">
+                            Script ran successfully • 1 hour ago
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon info">
+                        <i class="bi bi-upload"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Uploaded file to USS</div>
+                        <div class="activity-meta">
+                            test.txt • 2 hours ago
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-footer text-center">
+                <a href="#" class="text-decoration-none">
+                    View all activity
+                    <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- System Status -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle-fill" style="color: var(--primary);"></i>
+                    System Status
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="row g-0">
+                    
+                    <div class="col-md-3">
+                        <div class="status-metric">
+                            <i class="bi bi-cpu-fill" style="color: var(--primary);"></i>
+                            <div class="status-label">CPU Usage</div>
+                            <div class="status-value">34%</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="status-metric">
+                            <i class="bi bi-clock-fill" style="color: var(--success);"></i>
+                            <div class="status-label">Uptime</div>
+                            <div class="status-value">45d 12h</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="status-metric">
+                            <i class="bi bi-hdd-fill" style="color: var(--info);"></i>
+                            <div class="status-label">Disk Space</div>
+                            <div class="status-value">67%</div>
+                            <small class="text-muted">Free</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="status-metric">
+                            <i class="bi bi-people-fill" style="color: var(--warning);"></i>
+                            <div class="status-label">Active Users</div>
+                            <div class="status-value">8</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
