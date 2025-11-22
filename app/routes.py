@@ -1,6 +1,17 @@
-from flask import render_template
+from flask import render_template, jsonify
 
 def init_routes(app):
     @app.route("/")
     def index():
-        return "<h1>KdG Mainframe Web Control Center</h1><p>App is running.</p>"
+        return render_template("index.html")
+    
+    @app.route("/datasets")
+    def datasets():
+        return render_template("datasets.html")
+    
+    @app.route("/api/health")
+    def api_health():
+        return jsonify({
+            "status": "ok",
+            "mock_mode": True
+        })
