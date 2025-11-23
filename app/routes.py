@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, current_app
+from flask import Blueprint, render_template, jsonify, current_app, request
 import subprocess
 import os
 
@@ -169,7 +169,6 @@ def init_routes(app):
     @app.route("/api/datasets/list", methods=["GET"])
     def list_datasets():
         try:
-            from flask import request
             hlq = request.args.get('hlq', '').strip()
             
             if not hlq:
@@ -223,7 +222,6 @@ def init_routes(app):
     @app.route("/api/datasets/members", methods=["GET"])
     def list_members():
         try:
-            from flask import request
             dataset = request.args.get('dataset', '').strip()
             
             if not dataset:
@@ -271,7 +269,6 @@ def init_routes(app):
     @app.route("/api/datasets/content", methods=["GET"])
     def get_content():
         try:
-            from flask import request
             dataset = request.args.get('dataset', '').strip()
             member = request.args.get('member', '').strip()
             
@@ -308,3 +305,58 @@ def init_routes(app):
             error_trace = traceback.format_exc()
             print(f"Error getting content:\n{error_trace}")
             return jsonify({"error": str(e)}), 500
+
+    @app.route("/api/datasets/save", methods=["POST"])
+    def save_content():
+        try:
+            data = request.get_json()
+            dataset = data.get('dataset', '').strip()
+            member = data.get('member', '').strip()
+            content = data.get('content', '')
+            
+            if not dataset:
+                return jsonify({"error": "Dataset parameter is required"}), 400
+            
+            mock_mode = current_app.config.get('MOCK_MODE', True)
+            
+            if mock_mode:
+                print(f"MOCK: Saving {dataset}({member})")
+                return jsonify({
+                    "success": True,
+                    "message": "Content saved successfully (MOCK)",
+                    "mock": True
+                })
+            
+            # Create a temporary file with the content
+            import tempfile
+            with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as tmp:
+                tmp.write(content)
+                tmp_path = tmp.name
+            
+            try:
+                # Upload the file to the mainframe
+                if member:
+                    cmd = f'zowe files upload file-to-data-set "{tmp_path}" "{dataset}({member})"'
+                else:
+                    cmd = f'zowe files upload file-to-data-set "{tmp_path}" "{dataset}"'
+                
+                output = run_zowe(cmd)
+                
+                return jsonify({
+                    "success": True,
+                    "message": "Content saved successfully",
+                    "mock": False
+                })
+            finally:
+                # Clean up temporary file
+                if os.path.exists(tmp_path):
+                    os.unlink(tmp_path)
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error saving content:\n{error_trace}")
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500

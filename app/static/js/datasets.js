@@ -112,7 +112,11 @@ function renderDatasets(datasets) {
                 <div class="dataset-actions">
                     <i class="bi bi-chevron-right"></i>
                 </div>
-            ` : ''}
+            ` : `
+                <div class="dataset-actions">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+            `}
         </div>
     `).join('');
 }
@@ -123,7 +127,7 @@ async function handleDatasetClick(datasetName, type) {
     if (type === 'PDS') {
         await loadMembers(datasetName);
     } else {
-        await loadContent(datasetName);
+        openInEditor(datasetName, null);
     }
 }
 
@@ -199,75 +203,11 @@ async function loadMembers(dataset) {
 }
 
 function openInEditor(dataset, member) {
-    window.location.href = `/editor?dataset=${encodeURIComponent(dataset)}&member=${encodeURIComponent(member)}`;
-}
-
-async function loadContent(dataset, member = null) {
-    const url = member 
-        ? `/api/datasets/content?dataset=${encodeURIComponent(dataset)}&member=${encodeURIComponent(member)}`
-        : `/api/datasets/content?dataset=${encodeURIComponent(dataset)}`;
-    
-    try {
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        
-        if (data.error) {
-            throw new Error(data.error);
-        }
-        
-        const contentName = member ? `${dataset}(${member})` : dataset;
-        showContentModal(contentName, data.content, dataset, member);
-        
-    } catch (error) {
-        console.error('Error loading content:', error);
-        alert(`Error loading content: ${error.message}`);
+    if (member) {
+        window.location.href = `/editor?dataset=${encodeURIComponent(dataset)}&member=${encodeURIComponent(member)}`;
+    } else {
+        window.location.href = `/editor?dataset=${encodeURIComponent(dataset)}`;
     }
-}
-
-function showContentModal(name, content, dataset, member) {
-    const modal = document.createElement('div');
-    modal.className = 'modal fade show';
-    modal.style.display = 'block';
-    modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
-    
-    const editorUrl = member 
-        ? `/editor?dataset=${encodeURIComponent(dataset)}&member=${encodeURIComponent(member)}`
-        : `/editor?dataset=${encodeURIComponent(dataset)}`;
-    
-    modal.innerHTML = `
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-file-code"></i> ${escapeHtml(name)}
-                    </h5>
-                    <button type="button" class="btn-close" onclick="this.closest('.modal').remove()"></button>
-                </div>
-                <div class="modal-body">
-                    <pre class="code-preview" style="max-height: 500px; overflow: auto; background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 4px;"><code>${escapeHtml(content)}</code></pre>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary-custom" onclick="this.closest('.modal').remove()">Close</button>
-                    <a href="${editorUrl}" class="btn-primary-custom">
-                        <i class="bi bi-pencil"></i> Edit
-                    </a>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            modal.remove();
-        }
-    });
 }
 
 function clearMembers() {
