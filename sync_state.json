@@ -1,13 +1,21 @@
 {
   "synced_jobs": {
-    "STC05179": true,
-    "STC03596": true,
-    "STC05221": true,
-    "TSU05900": true,
-    "TSU05974": true,
-    "TSU05951": true,
-    "JOB05970": true,
-    "JOB05968": true,
+    "STC05991": true,
+    "STC05990": true,
+    "STC05987": true,
+    "TSU05899": true,
+    "STC05989": true,
+    "STC05988": true,
+    "STC03674": true,
+    "STC05984": true,
+    "STC05986": true,
+    "STC05985": true,
+    "JOB05983": true,
+    "JOB05982": true,
+    "TSU05930": true,
+    "JOB05981": true,
+    "JOB05980": true,
+    "JOB05977": true,
     "JOB05967": true,
     "JOB05961": true,
     "JOB05949": true,
@@ -15,7 +23,6 @@
     "JOB05945": true,
     "JOB05943": true,
     "JOB05939": true,
-    "JOB05938": true,
     "JOB05937": true,
     "JOB05924": true,
     "JOB05918": true,
@@ -504,5 +511,5 @@
     "JOB00942": true,
     "STC00001": true
   },
-  "last_sync": "2025-11-23T08:55:38.723444"
+  "last_sync": "2025-11-23T09:06:17.105530"
 }
