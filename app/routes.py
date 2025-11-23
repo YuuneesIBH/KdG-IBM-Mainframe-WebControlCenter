@@ -1,24 +1,35 @@
 from flask import Blueprint, render_template, jsonify, current_app, request
 import subprocess
 import os
+import json
+import re
 
 api = Blueprint("api", __name__)
 
 def run_zowe(cmd):
-    print(f"Executing: {cmd}")  # Debug logging
+    """Execute a Zowe CLI command safely"""
+    print(f"Executing: {cmd}")
+    
+    # Use shell=False and pass command as list to avoid shell expansion issues
+    if isinstance(cmd, str):
+        import shlex
+        cmd_list = shlex.split(cmd)
+    else:
+        cmd_list = cmd
+    
     result = subprocess.run(
-        cmd, 
-        shell=True, 
+        cmd_list,
+        shell=False,  # Important: avoid shell globbing
         stdout=subprocess.PIPE, 
         stderr=subprocess.PIPE, 
         text=True
     )
     
-    print(f"Return code: {result.returncode}")  # Debug logging
-    print(f"stdout: {result.stdout[:200]}")  # Debug logging
+    print(f"Return code: {result.returncode}")
+    print(f"stdout: {result.stdout[:200]}")
     
     if result.returncode != 0:
-        print(f"stderr: {result.stderr}")  # Debug logging
+        print(f"stderr: {result.stderr}")
         raise Exception(result.stderr)
     
     return result.stdout
@@ -58,10 +69,8 @@ def init_routes(app):
     @app.route("/api/dashboard", methods=["GET"])
     def dashboard_data():
         try:
-            # Check if we're in mock mode
             mock_mode = current_app.config.get('MOCK_MODE', True)
             
-            # Debug output
             print(f"=" * 50)
             print(f"MOCK_MODE from config: {mock_mode}")
             print(f"MOCK_MODE from env: {os.environ.get('MOCK_MODE')}")
@@ -78,7 +87,6 @@ def init_routes(app):
                     "mock": True
                 })
             
-            # Real mainframe data
             user = os.environ.get("ZOS_USER")
             profile = os.environ.get("ZOWE_PROFILE", user)
             
@@ -90,7 +98,6 @@ def init_routes(app):
             try:
                 ds_cmd = f'zowe files list data-set "{user}.*"'
                 ds_output = run_zowe(ds_cmd)
-                # Count non-empty lines, skip header line
                 lines = [line for line in ds_output.splitlines() if line.strip() and not line.startswith('Data Set')]
                 dataset_count = len(lines)
             except Exception as e:
@@ -100,7 +107,6 @@ def init_routes(app):
             try:
                 jobs_cmd = f'zowe jobs list jobs --owner {user}'
                 jobs_output = run_zowe(jobs_cmd)
-                # Count non-empty lines, skip header line
                 lines = [line for line in jobs_output.splitlines() if line.strip() and not line.startswith('JOBID')]
                 jobs_today = len(lines)
             except Exception as e:
@@ -112,16 +118,15 @@ def init_routes(app):
             uss_path = None
             
             possible_paths = [
-                f'/u/~{user.lower()}',  # With tilde (common on this system)
-                f'/u/{user.lower()}',   # Lowercase
-                f'/u/{user}',           # Uppercase
+                f'/u/~{user.lower()}',
+                f'/u/{user.lower()}',
+                f'/u/{user}',
             ]
             
             for path in possible_paths:
                 try:
                     uss_cmd = f'zowe files list uss-files "{path}"'
                     uss_output = run_zowe(uss_cmd)
-                    # Count non-empty lines
                     lines = [line for line in uss_output.splitlines() if line.strip()]
                     uss_count = len(lines)
                     uss_path = path
@@ -135,7 +140,6 @@ def init_routes(app):
                 try:
                     scripts_cmd = f'zowe files list uss-files "{uss_path}"'
                     scripts_output = run_zowe(scripts_cmd)
-                    # Count files with script extensions
                     lines = scripts_output.splitlines()
                     script_count = sum(1 for line in lines if any(ext in line.lower() for ext in ['.rexx', '.sh', '.py', '.jcl']))
                 except Exception as e:
@@ -153,7 +157,6 @@ def init_routes(app):
             })
 
         except Exception as e:
-            # Log the full error for debugging
             import traceback
             error_trace = traceback.format_exc()
             print(f"Error fetching dashboard data:\n{error_trace}")
@@ -165,6 +168,253 @@ def init_routes(app):
                 "uss_files": 0,
                 "scripts": 0
             }), 500
+
+    # ==================== JOBS ENDPOINTS ====================
+    
+    @app.route("/api/jobs", methods=["GET"])
+    def list_jobs():
+        """List jobs with optional filtering"""
+        try:
+            owner = request.args.get('owner', '*').strip()
+            prefix = request.args.get('prefix', '*').strip()
+            status = request.args.get('status', '').strip()
+            
+            mock_mode = current_app.config.get('MOCK_MODE', True)
+            
+            if mock_mode:
+                # Mock data
+                mock_jobs = [
+                    {
+                        "jobid": "JOB00123",
+                        "jobname": "TESTJOB1",
+                        "owner": "ZUSER",
+                        "status": "OUTPUT",
+                        "retcode": "CC 0000",
+                        "class": "A"
+                    },
+                    {
+                        "jobid": "JOB00124",
+                        "jobname": "TESTJOB2",
+                        "owner": "ZUSER",
+                        "status": "ACTIVE",
+                        "retcode": None,
+                        "class": "A"
+                    },
+                    {
+                        "jobid": "JOB00125",
+                        "jobname": "COMPILE",
+                        "owner": "ZUSER",
+                        "status": "OUTPUT",
+                        "retcode": "CC 0004",
+                        "class": "A"
+                    }
+                ]
+                
+                # Filter by status if specified
+                if status and status != 'ALL':
+                    mock_jobs = [j for j in mock_jobs if j['status'] == status]
+                
+                return jsonify({
+                    "jobs": mock_jobs,
+                    "mock": True
+                })
+            
+            # Real mainframe data
+            user = os.environ.get("ZOS_USER")
+            
+            # Build command
+            cmd = f'zowe jobs list jobs --owner {owner} --rfj'
+            if prefix != '*':
+                cmd += f' --prefix {prefix}'
+            
+            print(f"Listing jobs with command: {cmd}")
+            output = run_zowe(cmd)
+            
+            # Parse JSON output
+            try:
+                data = json.loads(output)
+                jobs_list = data.get('data', [])
+            except json.JSONDecodeError:
+                # Fallback: parse table format
+                jobs_list = []
+                for line in output.splitlines():
+                    if line.strip() and not line.startswith('JOBID'):
+                        parts = line.split()
+                        if len(parts) >= 4:
+                            jobs_list.append({
+                                "jobid": parts[0],
+                                "jobname": parts[1],
+                                "owner": parts[2],
+                                "status": parts[3],
+                                "retcode": parts[4] if len(parts) > 4 else None,
+                                "class": parts[5] if len(parts) > 5 else "A"
+                            })
+            
+            # Filter by status if specified
+            if status and status != 'ALL':
+                jobs_list = [j for j in jobs_list if j.get('status') == status]
+            
+            return jsonify({
+                "jobs": jobs_list,
+                "mock": False
+            })
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error listing jobs:\n{error_trace}")
+            return jsonify({
+                "error": str(e),
+                "jobs": []
+            }), 500
+
+    @app.route("/api/jobs/<jobid>", methods=["GET"])
+    def get_job_details(jobid):
+        """Get detailed information about a specific job"""
+        try:
+            mock_mode = current_app.config.get('MOCK_MODE', True)
+            
+            if mock_mode:
+                # Mock data
+                return jsonify({
+                    "jobid": jobid,
+                    "jobname": "TESTJOB1",
+                    "owner": "ZUSER",
+                    "status": "OUTPUT",
+                    "retcode": "CC 0000",
+                    "class": "A",
+                    "subsystem": "JES2",
+                    "steps": [
+                        {
+                            "stepname": "STEP1",
+                            "procstep": None,
+                            "program": "IEFBR14",
+                            "retcode": "CC 0000"
+                        },
+                        {
+                            "stepname": "STEP2",
+                            "procstep": None,
+                            "program": "IEBGENER",
+                            "retcode": "CC 0000"
+                        }
+                    ],
+                    "spool": [
+                        {
+                            "id": "2",
+                            "ddname": "JESMSGLG",
+                            "stepname": "JES2",
+                            "procstep": None
+                        },
+                        {
+                            "id": "3",
+                            "ddname": "JESJCL",
+                            "stepname": "JES2",
+                            "procstep": None
+                        },
+                        {
+                            "id": "4",
+                            "ddname": "JESYSMSG",
+                            "stepname": "JES2",
+                            "procstep": None
+                        }
+                    ],
+                    "mock": True
+                })
+            
+            # Real mainframe data
+            cmd = f'zowe jobs view job-status-by-jobid {jobid} --rfj'
+            print(f"Getting job details: {cmd}")
+            output = run_zowe(cmd)
+            
+            job_data = json.loads(output)
+            
+            # Get spool files
+            spool_cmd = f'zowe jobs list spool-files-by-jobid {jobid} --rfj'
+            spool_output = run_zowe(spool_cmd)
+            spool_data = json.loads(spool_output)
+            
+            return jsonify({
+                "jobid": job_data.get('data', {}).get('jobid', jobid),
+                "jobname": job_data.get('data', {}).get('jobname', ''),
+                "owner": job_data.get('data', {}).get('owner', ''),
+                "status": job_data.get('data', {}).get('status', ''),
+                "retcode": job_data.get('data', {}).get('retcode'),
+                "class": job_data.get('data', {}).get('class', 'A'),
+                "subsystem": job_data.get('data', {}).get('subsystem'),
+                "steps": [],  # Would need additional parsing
+                "spool": spool_data.get('data', []),
+                "mock": False
+            })
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error getting job details:\n{error_trace}")
+            return jsonify({"error": str(e)}), 500
+
+    @app.route("/api/jobs/<jobid>", methods=["DELETE"])
+    def purge_job(jobid):
+        """Purge a job from the system"""
+        try:
+            mock_mode = current_app.config.get('MOCK_MODE', True)
+            
+            if mock_mode:
+                print(f"MOCK: Purging job {jobid}")
+                return jsonify({
+                    "success": True,
+                    "message": f"Job {jobid} purged successfully (MOCK)",
+                    "mock": True
+                })
+            
+            # Real mainframe operation
+            cmd = f'zowe jobs delete job {jobid}'
+            print(f"Purging job: {cmd}")
+            output = run_zowe(cmd)
+            
+            return jsonify({
+                "success": True,
+                "message": f"Job {jobid} purged successfully",
+                "mock": False
+            })
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error purging job:\n{error_trace}")
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+    @app.route("/api/jobs/<jobid>/spool/<int:spool_id>", methods=["GET"])
+    def get_spool_content(jobid, spool_id):
+        """Get the content of a specific spool file"""
+        try:
+            mock_mode = current_app.config.get('MOCK_MODE', True)
+            
+            if mock_mode:
+                return jsonify({
+                    "content": f"Mock spool content for {jobid} - spool {spool_id}\n\nThis is sample output from a JES2 job.\n",
+                    "mock": True
+                })
+            
+            # Real mainframe data
+            cmd = f'zowe jobs view spool-file-by-id {jobid} {spool_id}'
+            print(f"Getting spool content: {cmd}")
+            content = run_zowe(cmd)
+            
+            return jsonify({
+                "content": content,
+                "mock": False
+            })
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error getting spool content:\n{error_trace}")
+            return jsonify({"error": str(e)}), 500
+
+    # ==================== DATASETS ENDPOINTS ====================
 
     @app.route("/api/datasets/list", methods=["GET"])
     def list_datasets():
@@ -196,16 +446,14 @@ def init_routes(app):
             for line in output.splitlines():
                 line = line.strip()
                 if line and not line.startswith('Data Set'):
-                    # Parse dataset name
                     parts = line.split()
                     if parts:
                         ds_name = parts[0]
-                        # Determine if PDS or PS (simplified)
                         ds_type = "PDS" if any(x in ds_name.upper() for x in ['JCL', 'SOURCE', 'LOAD', 'LIB']) else "PS"
                         datasets.append({
                             "name": ds_name,
                             "type": ds_type,
-                            "members": 0  # Will be fetched when clicking on PDS
+                            "members": 0
                         })
             
             return jsonify({
@@ -327,14 +575,12 @@ def init_routes(app):
                     "mock": True
                 })
             
-            # Create a temporary file with the content
             import tempfile
             with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as tmp:
                 tmp.write(content)
                 tmp_path = tmp.name
             
             try:
-                # Upload the file to the mainframe
                 if member:
                     cmd = f'zowe files upload file-to-data-set "{tmp_path}" "{dataset}({member})"'
                 else:
@@ -348,7 +594,6 @@ def init_routes(app):
                     "mock": False
                 })
             finally:
-                # Clean up temporary file
                 if os.path.exists(tmp_path):
                     os.unlink(tmp_path)
             
