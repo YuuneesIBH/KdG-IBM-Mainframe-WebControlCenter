@@ -16,10 +16,8 @@ from activity_logger import (
 api = Blueprint("api", __name__)
 
 def run_zowe(cmd):
-    """Execute a Zowe CLI command safely"""
     print(f"Executing: {cmd}")
     
-    # Use shell=False and pass command as list to avoid shell expansion issues
     if isinstance(cmd, str):
         import shlex
         cmd_list = shlex.split(cmd)
@@ -124,7 +122,6 @@ def init_routes(app):
 
             print(f"Fetching data for user: {user}, profile: {profile}")
 
-            # Get datasets count
             try:
                 ds_cmd = f'zowe files list data-set "{user}.*"'
                 ds_output = run_zowe(ds_cmd)
@@ -134,20 +131,17 @@ def init_routes(app):
                 print(f"Error getting datasets: {e}")
                 dataset_count = 0
 
-            # Get ALL jobs (no filters) - use --rfj for JSON format to get accurate count
             try:
                 jobs_cmd = f'zowe jobs list jobs --owner * --rfj'
                 print(f"Getting ALL jobs with command: {jobs_cmd}")
                 jobs_output = run_zowe(jobs_cmd)
                 
-                # Parse JSON output
                 try:
                     data = json.loads(jobs_output)
                     jobs_list = data.get('data', [])
                     jobs_today = len(jobs_list)
                     print(f"✅ Found {jobs_today} total jobs")
                 except json.JSONDecodeError:
-                    # Fallback: parse table format
                     lines = [line for line in jobs_output.splitlines() if line.strip() and not line.startswith('JOBID')]
                     jobs_today = len(lines)
                     print(f"✅ Found {jobs_today} total jobs (table format)")
@@ -155,11 +149,9 @@ def init_routes(app):
                 print(f"Error getting jobs: {e}")
                 jobs_today = 0
 
-            # Get USS files from /u directory (not user-specific)
             uss_count = 0
             script_count = 0
             
-            # Try to browse /u directory first
             try:
                 uss_cmd = 'zowe files list uss-files "/u"'
                 uss_output = run_zowe(uss_cmd)
@@ -167,12 +159,10 @@ def init_routes(app):
                 uss_count = len(lines)
                 print(f"✅ Found {uss_count} items in /u directory")
                 
-                # Count scripts by extension
                 script_count = sum(1 for line in lines if any(ext in line.lower() for ext in ['.rexx', '.sh', '.py', '.jcl']))
             except Exception as e:
                 print(f"Error browsing /u directory: {e}")
                 
-                # Fallback: try user-specific path
                 possible_paths = [
                     f'/u/{user.lower()}',
                     f'/u/{user}',
@@ -186,7 +176,6 @@ def init_routes(app):
                         uss_count = len(lines)
                         print(f"✅ Found USS directory: {path} with {uss_count} items")
                         
-                        # Count scripts
                         script_count = sum(1 for line in lines if any(ext in line.lower() for ext in ['.rexx', '.sh', '.py', '.jcl']))
                         break
                     except Exception as e:
@@ -213,12 +202,9 @@ def init_routes(app):
                 "uss_files": 0,
                 "scripts": 0
             }), 500
-
-    # ==================== JOBS ENDPOINTS ====================
     
     @app.route("/api/jobs", methods=["GET"])
     def list_jobs():
-        """List jobs with optional filtering"""
         try:
             owner = request.args.get('owner', '*').strip()
             prefix = request.args.get('prefix', '*').strip()
@@ -227,7 +213,6 @@ def init_routes(app):
             mock_mode = current_app.config.get('MOCK_MODE', True)
             
             if mock_mode:
-                # Mock data
                 mock_jobs = [
                     {
                         "jobid": "JOB00123",
@@ -255,7 +240,6 @@ def init_routes(app):
                     }
                 ]
                 
-                # Filter by status if specified
                 if status and status != 'ALL':
                     mock_jobs = [j for j in mock_jobs if j['status'] == status]
                 
@@ -264,10 +248,8 @@ def init_routes(app):
                     "mock": True
                 })
             
-            # Real mainframe data
             user = os.environ.get("ZOS_USER")
             
-            # Build command
             cmd = f'zowe jobs list jobs --owner {owner} --rfj'
             if prefix != '*':
                 cmd += f' --prefix {prefix}'
@@ -275,7 +257,6 @@ def init_routes(app):
             print(f"Listing jobs with command: {cmd}")
             output = run_zowe(cmd)
             
-            # Parse JSON output
             try:
                 data = json.loads(output)
                 jobs_list = data.get('data', [])
@@ -295,7 +276,6 @@ def init_routes(app):
                                 "class": parts[5] if len(parts) > 5 else "A"
                             })
             
-            # Filter by status if specified
             if status and status != 'ALL':
                 jobs_list = [j for j in jobs_list if j.get('status') == status]
             
@@ -315,12 +295,10 @@ def init_routes(app):
 
     @app.route("/api/jobs/<jobid>", methods=["GET"])
     def get_job_details(jobid):
-        """Get detailed information about a specific job"""
         try:
             mock_mode = current_app.config.get('MOCK_MODE', True)
             
             if mock_mode:
-                # Mock data
                 return jsonify({
                     "jobid": jobid,
                     "jobname": "TESTJOB1",
@@ -366,14 +344,12 @@ def init_routes(app):
                     "mock": True
                 })
             
-            # Real mainframe data
             cmd = f'zowe jobs view job-status-by-jobid {jobid} --rfj'
             print(f"Getting job details: {cmd}")
             output = run_zowe(cmd)
             
             job_data = json.loads(output)
             
-            # Get spool files
             spool_cmd = f'zowe jobs list spool-files-by-jobid {jobid} --rfj'
             spool_output = run_zowe(spool_cmd)
             spool_data = json.loads(spool_output)
@@ -399,7 +375,6 @@ def init_routes(app):
 
     @app.route("/api/jobs/<jobid>", methods=["DELETE"])
     def purge_job(jobid):
-        """Purge a job from the system"""
         try:
             mock_mode = current_app.config.get('MOCK_MODE', True)
             
@@ -420,12 +395,10 @@ def init_routes(app):
                     "mock": True
                 })
             
-            # Real mainframe operation
             cmd = f'zowe jobs delete job {jobid}'
             print(f"Purging job: {cmd}")
             output = run_zowe(cmd)
             
-            # NIEUW: Log de activity
             ActivityLogger.log_activity(
                 activity_type="danger",
                 title=f"Purged job {jobid}",
@@ -450,7 +423,6 @@ def init_routes(app):
 
     @app.route("/api/jobs/<jobid>/spool/<int:spool_id>", methods=["GET"])
     def get_spool_content(jobid, spool_id):
-        """Get the content of a specific spool file"""
         try:
             mock_mode = current_app.config.get('MOCK_MODE', True)
             
@@ -460,7 +432,6 @@ def init_routes(app):
                     "mock": True
                 })
             
-            # Real mainframe data
             cmd = f'zowe jobs view spool-file-by-id {jobid} {spool_id}'
             print(f"Getting spool content: {cmd}")
             content = run_zowe(cmd)
@@ -475,8 +446,6 @@ def init_routes(app):
             error_trace = traceback.format_exc()
             print(f"Error getting spool content:\n{error_trace}")
             return jsonify({"error": str(e)}), 500
-
-    # ==================== DATASETS ENDPOINTS ====================
 
     @app.route("/api/datasets/list", methods=["GET"])
     def list_datasets():
@@ -670,7 +639,6 @@ def init_routes(app):
 
     @app.route("/api/uss/browse", methods=["GET"])
     def browse_uss():
-        """Browse USS directory"""
         try:
             path = request.args.get('path', '/').strip()
             
@@ -680,7 +648,6 @@ def init_routes(app):
             mock_mode = current_app.config.get('MOCK_MODE', True)
             
             if mock_mode:
-                # Mock USS file structure
                 mock_files = [
                     {
                         "name": "scripts",
@@ -732,7 +699,6 @@ def init_routes(app):
                     "mock": True
                 })
             
-            # Real mainframe data - use simple list command
             cmd = f'zowe files list uss-files "{path}"'
             print(f"Browsing USS: {cmd}")
             output = run_zowe(cmd)
@@ -741,15 +707,12 @@ def init_routes(app):
             lines = [l.strip() for l in output.splitlines() if l.strip()]
             
             for line in lines:
-                # Skip . and .. entries
                 if line in ['.', '..']:
                     continue
                 
-                # Check if line ends with / to detect directories
                 is_directory = line.endswith('/')
                 name = line.rstrip('/')
                 
-                # Skip empty names
                 if not name:
                     continue
                 
@@ -775,7 +738,6 @@ def init_routes(app):
 
     @app.route("/api/uss/file", methods=["GET"])
     def get_uss_file():
-        """Get USS file content"""
         try:
             path = request.args.get('path', '').strip()
             
@@ -800,7 +762,6 @@ def init_routes(app):
                     "mock": True
                 })
             
-            # Real mainframe data
             cmd = f'zowe files view uss-file "{path}"'
             print(f"Reading USS file: {cmd}")
             content = run_zowe(cmd)
@@ -868,7 +829,6 @@ def init_routes(app):
 
     @app.route("/api/uss/file", methods=["DELETE"])
     def delete_uss_file():
-        """Delete USS file or directory"""
         try:
             path = request.args.get('path', '').strip()
             
@@ -884,16 +844,13 @@ def init_routes(app):
                     "message": f"Item {path} deleted successfully (MOCK)",
                     "mock": True
                 })
-            
-            # Real mainframe operation
-            # Use recursive flag for directories
+        
             cmd = f'zowe files delete uss "{path}" --for-sure --recursive'
             print(f"Deleting USS item: {cmd}")
             
             try:
                 output = run_zowe(cmd)
             except Exception as e:
-                # If recursive fails, try without it (for files)
                 cmd = f'zowe files delete uss "{path}" --for-sure'
                 output = run_zowe(cmd)
             
@@ -914,7 +871,6 @@ def init_routes(app):
 
     @app.route("/api/uss/directory", methods=["POST"])
     def create_uss_directory():
-        """Create USS directory"""
         try:
             data = request.get_json()
             path = data.get('path', '').strip()
@@ -932,7 +888,6 @@ def init_routes(app):
                     "mock": True
                 })
             
-            # Real mainframe operation
             cmd = f'zowe files create uss-directory "{path}"'
             print(f"Creating USS directory: {cmd}")
             output = run_zowe(cmd)
@@ -954,7 +909,6 @@ def init_routes(app):
 
     @app.route("/api/uss/download", methods=["GET"])
     def download_uss_file():
-        """Download USS file"""
         try:
             path = request.args.get('path', '').strip()
             
@@ -975,7 +929,6 @@ def init_routes(app):
                     }
                 )
             
-            # Real mainframe operation
             import tempfile
             import shutil
             
@@ -1005,7 +958,6 @@ def init_routes(app):
                     download_name=filename
                 )
             except Exception as e:
-                # Cleanup on error
                 shutil.rmtree(tmp_dir, ignore_errors=True)
                 raise e
             
@@ -1018,7 +970,6 @@ def init_routes(app):
         
     @app.route("/api/activities/sync", methods=["POST"])
     def sync_mainframe_activities():
-        """Synchroniseer recente mainframe jobs naar activities"""
         from activity_sync import ActivitySync
         
         mock_mode = current_app.config.get('MOCK_MODE', True)

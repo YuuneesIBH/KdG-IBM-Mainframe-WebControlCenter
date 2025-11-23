@@ -10,15 +10,12 @@ class ActivitySync:
     
     @staticmethod
     def sync_mainframe_jobs(mock_mode=False):
-        """Sync alleen NIEUWE jobs van de mainframe"""
         if mock_mode:
             return {"success": True, "synced": 0, "mock": True}
         
         try:
-            # Laad eerder gesynced jobs
             synced_jobs = ActivitySync._load_sync_state()
             
-            # Haal alle OUTPUT jobs op
             cmd = 'zowe jobs list jobs --owner * --rfj'
             output = run_zowe(cmd)
             
@@ -35,12 +32,10 @@ class ActivitySync:
                 status = job.get('status', '')
                 retcode = job.get('retcode', '')
                 
-                # Skip als we deze job al hebben gelogd
                 if jobid in synced_jobs:
-                    new_synced_jobs[jobid] = True  # Behoud in state
+                    new_synced_jobs[jobid] = True 
                     continue
                 
-                # Log alleen OUTPUT (completed) jobs
                 if status == 'OUTPUT':
                     # Bepaal of job succesvol was
                     if retcode and 'CC 0000' in retcode:
@@ -61,7 +56,6 @@ class ActivitySync:
                     synced_count += 1
                     new_synced_jobs[jobid] = True
             
-            # Save updated sync state
             ActivitySync._save_sync_state(new_synced_jobs)
             
             print(f"✅ Synced {synced_count} new job activities from mainframe")
@@ -80,7 +74,6 @@ class ActivitySync:
     
     @staticmethod
     def _load_sync_state():
-        """Laad de lijst van al gesynced job IDs"""
         if not os.path.exists(SYNC_STATE_FILE):
             return {}
         
@@ -93,10 +86,7 @@ class ActivitySync:
     
     @staticmethod
     def _save_sync_state(synced_jobs):
-        """Sla de lijst van gesynced job IDs op"""
-        # Behoud alleen laatste 1000 jobs om file niet te groot te laten worden
         if len(synced_jobs) > 1000:
-            # Converteer naar lijst, sorteer, neem laatste 1000
             jobs_list = list(synced_jobs.keys())[-1000:]
             synced_jobs = {job: True for job in jobs_list}
         
@@ -111,7 +101,6 @@ class ActivitySync:
     
     @staticmethod
     def clear_sync_state():
-        """Wis de sync state (voor testing)"""
         if os.path.exists(SYNC_STATE_FILE):
             os.remove(SYNC_STATE_FILE)
             print("🗑️  Sync state cleared")

@@ -323,7 +323,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('System ready for mainframe operations');
 });
 
-// Export for global use
 window.Utils = Utils;
 window.Notifications = Notifications;
 window.Loading = Loading;

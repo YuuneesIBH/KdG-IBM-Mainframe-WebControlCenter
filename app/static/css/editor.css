@@ -129,7 +129,6 @@
     background: #1e1e1e;
 }
 
-/* Syntax Highlighting Styles */
 .syntax-jcl .comment { color: #6a9955; }
 .syntax-jcl .jobcard { color: #569cd6; font-weight: bold; }
 .syntax-jcl .exec { color: #c586c0; font-weight: bold; }

@@ -9,15 +9,6 @@ MAX_ACTIVITIES = 50
 class ActivityLogger:
     @staticmethod
     def log_activity(activity_type: str, title: str, meta: str = "", icon: str = "info"):
-        """
-        Log an activity to the file
-        
-        Args:
-            activity_type: Type of activity (success, primary, warning, info, danger)
-            title: Main activity description
-            meta: Additional metadata (e.g., "Return Code: 0000 • 5 minutes ago")
-            icon: Bootstrap icon name (default: "info")
-        """
         activities = ActivityLogger._load_activities()
         
         activity = {
@@ -31,8 +22,7 @@ class ActivityLogger:
         activities.insert(0, activity)
         
         activities = activities[:MAX_ACTIVITIES]
-        
-        # Save
+
         ActivityLogger._save_activities(activities)
     
     @staticmethod
