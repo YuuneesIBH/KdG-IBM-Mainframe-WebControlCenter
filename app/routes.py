@@ -95,6 +95,7 @@ def init_routes(app):
 
             print(f"Fetching data for user: {user}, profile: {profile}")
 
+            # Get datasets count
             try:
                 ds_cmd = f'zowe files list data-set "{user}.*"'
                 ds_output = run_zowe(ds_cmd)
@@ -104,49 +105,64 @@ def init_routes(app):
                 print(f"Error getting datasets: {e}")
                 dataset_count = 0
 
+            # Get ALL jobs (no filters) - use --rfj for JSON format to get accurate count
             try:
-                jobs_cmd = f'zowe jobs list jobs --owner {user}'
+                jobs_cmd = f'zowe jobs list jobs --owner * --rfj'
+                print(f"Getting ALL jobs with command: {jobs_cmd}")
                 jobs_output = run_zowe(jobs_cmd)
-                lines = [line for line in jobs_output.splitlines() if line.strip() and not line.startswith('JOBID')]
-                jobs_today = len(lines)
+                
+                # Parse JSON output
+                try:
+                    data = json.loads(jobs_output)
+                    jobs_list = data.get('data', [])
+                    jobs_today = len(jobs_list)
+                    print(f"✅ Found {jobs_today} total jobs")
+                except json.JSONDecodeError:
+                    # Fallback: parse table format
+                    lines = [line for line in jobs_output.splitlines() if line.strip() and not line.startswith('JOBID')]
+                    jobs_today = len(lines)
+                    print(f"✅ Found {jobs_today} total jobs (table format)")
             except Exception as e:
                 print(f"Error getting jobs: {e}")
                 jobs_today = 0
 
+            # Get USS files from /u directory (not user-specific)
             uss_count = 0
             script_count = 0
-            uss_path = None
             
-            possible_paths = [
-                f'/u/~{user.lower()}',
-                f'/u/{user.lower()}',
-                f'/u/{user}',
-            ]
-            
-            for path in possible_paths:
-                try:
-                    uss_cmd = f'zowe files list uss-files "{path}"'
-                    uss_output = run_zowe(uss_cmd)
-                    lines = [line for line in uss_output.splitlines() if line.strip()]
-                    uss_count = len(lines)
-                    uss_path = path
-                    print(f"✅ Found USS directory: {path}")
-                    break
-                except Exception as e:
-                    print(f"USS path {path} not found, trying next...")
-                    continue
-            
-            if uss_path:
-                try:
-                    scripts_cmd = f'zowe files list uss-files "{uss_path}"'
-                    scripts_output = run_zowe(scripts_cmd)
-                    lines = scripts_output.splitlines()
-                    script_count = sum(1 for line in lines if any(ext in line.lower() for ext in ['.rexx', '.sh', '.py', '.jcl']))
-                except Exception as e:
-                    print(f"Error getting scripts: {e}")
-                    script_count = 0
-            else:
-                print(f"⚠️ No USS directory found for user {user}")
+            # Try to browse /u directory first
+            try:
+                uss_cmd = 'zowe files list uss-files "/u"'
+                uss_output = run_zowe(uss_cmd)
+                lines = [line.strip() for line in uss_output.splitlines() if line.strip() and line.strip() not in ['.', '..']]
+                uss_count = len(lines)
+                print(f"✅ Found {uss_count} items in /u directory")
+                
+                # Count scripts by extension
+                script_count = sum(1 for line in lines if any(ext in line.lower() for ext in ['.rexx', '.sh', '.py', '.jcl']))
+            except Exception as e:
+                print(f"Error browsing /u directory: {e}")
+                
+                # Fallback: try user-specific path
+                possible_paths = [
+                    f'/u/{user.lower()}',
+                    f'/u/{user}',
+                ]
+                
+                for path in possible_paths:
+                    try:
+                        uss_cmd = f'zowe files list uss-files "{path}"'
+                        uss_output = run_zowe(uss_cmd)
+                        lines = [line.strip() for line in uss_output.splitlines() if line.strip() and line.strip() not in ['.', '..']]
+                        uss_count = len(lines)
+                        print(f"✅ Found USS directory: {path} with {uss_count} items")
+                        
+                        # Count scripts
+                        script_count = sum(1 for line in lines if any(ext in line.lower() for ext in ['.rexx', '.sh', '.py', '.jcl']))
+                        break
+                    except Exception as e:
+                        print(f"USS path {path} not found, trying next...")
+                        continue
 
             return jsonify({
                 "datasets": dataset_count,
