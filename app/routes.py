@@ -3,6 +3,15 @@ import subprocess
 import os
 import json
 import re
+from activity_logger import (
+    ActivityLogger, 
+    log_job_completed, 
+    log_job_failed,
+    log_file_edited, 
+    log_script_executed, 
+    log_uss_upload,
+    log_dataset_created
+)
 
 api = Blueprint("api", __name__)
 
@@ -65,6 +74,26 @@ def init_routes(app):
             "mock_mode": mock_mode,
             "zos_user": os.environ.get('ZOS_USER', 'Not set')
         })
+        
+    @app.route("/api/activities", methods=["GET"])
+    def get_activities():
+        """Get recent activities"""
+        try:
+            limit = request.args.get('limit', 10, type=int)
+            activities = ActivityLogger.get_recent_activities(limit)
+            
+            return jsonify({
+                "activities": activities,
+                "success": True
+            })
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error getting activities:\n{error_trace}")
+            return jsonify({
+                "error": str(e),
+                "activities": []
+            }), 500
 
     @app.route("/api/dashboard", methods=["GET"])
     def dashboard_data():
@@ -376,6 +405,15 @@ def init_routes(app):
             
             if mock_mode:
                 print(f"MOCK: Purging job {jobid}")
+                
+                # NIEUW: Log de activity
+                ActivityLogger.log_activity(
+                    activity_type="danger",
+                    title=f"Purged job {jobid}",
+                    meta="Job removed from system",
+                    icon="trash-fill"
+                )
+                
                 return jsonify({
                     "success": True,
                     "message": f"Job {jobid} purged successfully (MOCK)",
@@ -386,6 +424,14 @@ def init_routes(app):
             cmd = f'zowe jobs delete job {jobid}'
             print(f"Purging job: {cmd}")
             output = run_zowe(cmd)
+            
+            # NIEUW: Log de activity
+            ActivityLogger.log_activity(
+                activity_type="danger",
+                title=f"Purged job {jobid}",
+                meta="Job removed from system",
+                icon="trash-fill"
+            )
             
             return jsonify({
                 "success": True,
@@ -968,3 +1014,17 @@ def init_routes(app):
             error_trace = traceback.format_exc()
             print(f"Error downloading USS file:\n{error_trace}")
             return jsonify({"error": str(e)}), 500
+        
+        
+    @app.route("/api/activities/sync", methods=["POST"])
+    def sync_mainframe_activities():
+        """Synchroniseer recente mainframe jobs naar activities"""
+        from activity_sync import ActivitySync
+        
+        mock_mode = current_app.config.get('MOCK_MODE', True)
+        result = ActivitySync.sync_mainframe_jobs(mock_mode)
+        
+        if result.get('success'):
+            return jsonify(result)
+        else:
+            return jsonify(result), 500
