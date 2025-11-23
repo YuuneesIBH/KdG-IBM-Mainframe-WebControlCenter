@@ -5,7 +5,6 @@ let isModified = false;
 let autoSaveInterval = null;
 
 function initEditor() {
-    // Get dataset and member from URL params
     const urlParams = new URLSearchParams(window.location.search);
     currentDataset = urlParams.get('dataset');
     currentMember = urlParams.get('member');
@@ -19,14 +18,11 @@ function initEditor() {
         }
     }
     
-    // Setup editor event listeners
     const editor = document.getElementById('codeEditor');
     editor.addEventListener('input', handleEditorChange);
     
-    // Setup keyboard shortcuts
     document.addEventListener('keydown', handleKeyboardShortcuts);
     
-    // Setup auto-save if enabled
     const autoSave = localStorage.getItem('editorAutoSave') === 'true';
     if (autoSave) {
         enableAutoSave();
@@ -37,6 +33,7 @@ function handleEditorChange() {
     const currentContent = document.getElementById('codeEditor').value;
     isModified = currentContent !== originalContent;
     updateSaveStatus();
+    updateLineNumbers();
 }
 
 function updateSaveStatus() {
@@ -54,7 +51,7 @@ function updateSaveStatus() {
 
 async function loadMembers() {
     try {
-        const response = await fetch(`/api/datasets/${encodeURIComponent(currentDataset)}/members`);
+        const response = await fetch(`/api/datasets/members?dataset=${encodeURIComponent(currentDataset)}`);
         const data = await response.json();
 
         if (data.error) {
@@ -64,11 +61,27 @@ async function loadMembers() {
         renderMembersList(data.members || []);
     } catch (error) {
         console.error('Error loading members:', error);
+        document.getElementById('membersList').innerHTML = `
+            <div class="text-center py-4">
+                <i class="bi bi-exclamation-triangle text-danger"></i>
+                <p class="text-muted mt-2">Error loading members</p>
+            </div>
+        `;
     }
 }
 
 function renderMembersList(members) {
     const container = document.getElementById('membersList');
+    
+    if (members.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-4">
+                <i class="bi bi-file-code" style="font-size: 2rem; color: var(--text-muted); opacity: 0.3;"></i>
+                <p class="text-muted mt-2">No members found</p>
+            </div>
+        `;
+        return;
+    }
     
     container.innerHTML = members.map(member => `
         <div class="member-item ${member.name === currentMember ? 'active' : ''}" 
@@ -77,7 +90,7 @@ function renderMembersList(members) {
                 <i class="bi bi-file-code member-icon"></i>
                 <div>
                     <div class="member-name">${member.name}</div>
-                    ${member.ext ? `<div class="member-meta">${member.ext}</div>` : ''}
+                    ${member.modified ? `<div class="member-meta">${member.modified}</div>` : ''}
                 </div>
             </div>
             <div class="member-actions" onclick="event.stopPropagation()">
@@ -98,16 +111,16 @@ async function loadMember(memberName) {
     currentMember = memberName;
     document.getElementById('memberName').textContent = memberName;
     
-    // Update URL without reload
     const url = new URL(window.location);
     url.searchParams.set('member', memberName);
     window.history.pushState({}, '', url);
     
     const editor = document.getElementById('codeEditor');
     editor.value = 'Loading...';
+    editor.disabled = true;
     
     try {
-        const response = await fetch(`/api/members/${encodeURIComponent(currentDataset)}/${encodeURIComponent(memberName)}`);
+        const response = await fetch(`/api/datasets/content?dataset=${encodeURIComponent(currentDataset)}&member=${encodeURIComponent(memberName)}`);
         const data = await response.json();
 
         if (data.error) {
@@ -116,18 +129,18 @@ async function loadMember(memberName) {
 
         originalContent = data.content || '';
         editor.value = originalContent;
+        editor.disabled = false;
         isModified = false;
         updateSaveStatus();
         updateLineNumbers();
         
-        // Update active member in sidebar
         loadMembers();
         
-        // Detect and apply syntax highlighting
         detectSyntax();
         
     } catch (error) {
         editor.value = '';
+        editor.disabled = false;
         alert(`Error loading member: ${error.message}`);
     }
 }
@@ -145,12 +158,16 @@ async function saveMember() {
     saveIndicator.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Saving...';
     
     try {
-        const response = await fetch(`/api/members/${encodeURIComponent(currentDataset)}/${encodeURIComponent(currentMember)}`, {
-            method: 'PUT',
+        const response = await fetch(`/api/datasets/save`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ content: content })
+            body: JSON.stringify({ 
+                dataset: currentDataset,
+                member: currentMember,
+                content: content 
+            })
         });
         
         const data = await response.json();
@@ -174,6 +191,10 @@ async function saveMember() {
         saveIndicator.className = 'save-indicator error';
         saveIndicator.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Error';
         alert(`Error saving member: ${error.message}`);
+        
+        setTimeout(() => {
+            saveIndicator.innerHTML = '';
+        }, 3000);
     }
 }
 
@@ -183,8 +204,15 @@ async function deleteMember(memberName) {
     }
     
     try {
-        const response = await fetch(`/api/members/${encodeURIComponent(currentDataset)}/${encodeURIComponent(memberName)}`, {
-            method: 'DELETE'
+        const response = await fetch(`/api/datasets/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                dataset: currentDataset,
+                member: memberName
+            })
         });
         
         const data = await response.json();
@@ -195,11 +223,14 @@ async function deleteMember(memberName) {
         
         alert('Member deleted successfully');
         
-        // If deleted member was current, clear editor
         if (memberName === currentMember) {
             currentMember = '';
             document.getElementById('codeEditor').value = '';
             document.getElementById('memberName').textContent = 'No member selected';
+            
+            const url = new URL(window.location);
+            url.searchParams.delete('member');
+            window.history.pushState({}, '', url);
         }
         
         loadMembers();
@@ -229,12 +260,16 @@ async function createNewMember() {
     }
     
     try {
-        const response = await fetch(`/api/members/${encodeURIComponent(currentDataset)}/${encodeURIComponent(memberName)}`, {
-            method: 'PUT',
+        const response = await fetch(`/api/datasets/save`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ content: '' })
+            body: JSON.stringify({ 
+                dataset: currentDataset,
+                member: memberName,
+                content: '' 
+            })
         });
         
         const data = await response.json();
@@ -257,7 +292,6 @@ function detectSyntax() {
     const editor = document.getElementById('codeEditor');
     const content = editor.value.toUpperCase();
     
-    // Simple syntax detection
     if (content.includes('//') && content.includes('JOB')) {
         editor.className = 'syntax-jcl';
     } else if (content.includes('IDENTIFICATION DIVISION') || content.includes('PROCEDURE DIVISION')) {
@@ -274,7 +308,7 @@ function updateLineNumbers() {
     const lineCount = editor.value.split('\n').length;
     const lineNumbersContainer = document.getElementById('lineNumbers');
     
-    if (lineNumbersContainer) {
+    if (lineNumbersContainer && editor.classList.contains('editor-with-numbers')) {
         let numbers = '';
         for (let i = 1; i <= lineCount; i++) {
             numbers += `<span>${i}</span>`;
@@ -338,7 +372,7 @@ function enableAutoSave() {
         if (isModified && currentMember) {
             saveMember();
         }
-    }, 30000); // Auto-save every 30 seconds
+    }, 30000);
 }
 
 function disableAutoSave() {
@@ -349,7 +383,6 @@ function disableAutoSave() {
 }
 
 function handleKeyboardShortcuts(e) {
-    // Ctrl+S or Cmd+S to save
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
         if (isModified) {
@@ -384,7 +417,6 @@ function closeModal(modalId) {
 document.addEventListener('DOMContentLoaded', function() {
     initEditor();
     
-    // Load saved preferences
     const savedFontSize = localStorage.getItem('editorFontSize');
     if (savedFontSize) {
         document.getElementById('codeEditor').style.fontSize = savedFontSize + 'px';
