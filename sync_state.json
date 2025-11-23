@@ -1,19 +1,24 @@
 {
   "synced_jobs": {
-    "JOB07257": true,
-    "JOB07256": true,
+    "JOB07290": true,
+    "JOB07287": true,
+    "JOB07286": true,
+    "JOB07280": true,
+    "JOB07279": true,
+    "JOB07273": true,
+    "JOB07272": true,
+    "JOB07271": true,
+    "JOB07265": true,
+    "JOB07259": true,
     "JOB07255": true,
-    "JOB07252": true,
     "JOB07251": true,
     "JOB07246": true,
     "JOB07248": true,
     "JOB07241": true,
-    "JOB07230": true,
     "JOB07227": true,
     "JOB07093": true,
     "JOB07226": true,
     "JOB07221": true,
-    "JOB07215": true,
     "JOB07207": true,
     "JOB07205": true,
     "JOB07190": true,
@@ -418,5 +423,5 @@
     "JOB02545": true,
     "STC00001": true
   },
-  "last_sync": "2025-11-23T19:28:37.439101"
+  "last_sync": "2025-11-23T19:41:37.555244"
 }
