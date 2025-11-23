@@ -605,3 +605,350 @@ def init_routes(app):
                 "success": False,
                 "error": str(e)
             }), 500
+
+    @app.route("/api/uss/browse", methods=["GET"])
+    def browse_uss():
+        """Browse USS directory"""
+        try:
+            path = request.args.get('path', '/').strip()
+            
+            if not path:
+                return jsonify({"error": "Path parameter is required"}), 400
+            
+            mock_mode = current_app.config.get('MOCK_MODE', True)
+            
+            if mock_mode:
+                # Mock USS file structure
+                mock_files = [
+                    {
+                        "name": "scripts",
+                        "type": "directory",
+                        "permissions": "drwxr-xr-x",
+                        "size": 4096,
+                        "modified": "2024-11-20"
+                    },
+                    {
+                        "name": "data",
+                        "type": "directory",
+                        "permissions": "drwxr-xr-x",
+                        "size": 4096,
+                        "modified": "2024-11-19"
+                    },
+                    {
+                        "name": "test.sh",
+                        "type": "file",
+                        "permissions": "-rwxr-xr-x",
+                        "size": 1024,
+                        "modified": "2024-11-22"
+                    },
+                    {
+                        "name": "config.txt",
+                        "type": "file",
+                        "permissions": "-rw-r--r--",
+                        "size": 512,
+                        "modified": "2024-11-21"
+                    },
+                    {
+                        "name": "backup.tar.gz",
+                        "type": "file",
+                        "permissions": "-rw-r--r--",
+                        "size": 204800,
+                        "modified": "2024-11-18"
+                    },
+                    {
+                        "name": "README.md",
+                        "type": "file",
+                        "permissions": "-rw-r--r--",
+                        "size": 2048,
+                        "modified": "2024-11-15"
+                    }
+                ]
+                
+                return jsonify({
+                    "path": path,
+                    "files": mock_files,
+                    "mock": True
+                })
+            
+            # Real mainframe data - use simple list command
+            cmd = f'zowe files list uss-files "{path}"'
+            print(f"Browsing USS: {cmd}")
+            output = run_zowe(cmd)
+            
+            files = []
+            lines = [l.strip() for l in output.splitlines() if l.strip()]
+            
+            for line in lines:
+                # Skip . and .. entries
+                if line in ['.', '..']:
+                    continue
+                
+                # Check if line ends with / to detect directories
+                is_directory = line.endswith('/')
+                name = line.rstrip('/')
+                
+                # Skip empty names
+                if not name:
+                    continue
+                
+                files.append({
+                    "name": name,
+                    "type": "directory" if is_directory else "file",
+                    "permissions": "drwxr-xr-x" if is_directory else "-rw-r--r--",
+                    "size": 4096 if is_directory else 0,
+                    "modified": "Unknown"
+                })
+            
+            return jsonify({
+                "path": path,
+                "files": files,
+                "mock": False
+            })
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error browsing USS:\n{error_trace}")
+            return jsonify({"error": str(e)}), 500
+
+    @app.route("/api/uss/file", methods=["GET"])
+    def get_uss_file():
+        """Get USS file content"""
+        try:
+            path = request.args.get('path', '').strip()
+            
+            if not path:
+                return jsonify({"error": "Path parameter is required"}), 400
+            
+            mock_mode = current_app.config.get('MOCK_MODE', True)
+            
+            if mock_mode:
+                return jsonify({
+                    "content": f"""#!/bin/bash
+    # Mock USS file content
+    # File: {path}
+
+    echo "Hello from USS"
+    echo "This is a test script"
+
+    # Example commands
+    ls -la
+    pwd
+    """,
+                    "mock": True
+                })
+            
+            # Real mainframe data
+            cmd = f'zowe files view uss-file "{path}"'
+            print(f"Reading USS file: {cmd}")
+            content = run_zowe(cmd)
+            
+            return jsonify({
+                "content": content,
+                "mock": False
+            })
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error reading USS file:\n{error_trace}")
+            return jsonify({"error": str(e)}), 500
+
+    @app.route("/api/uss/file", methods=["PUT"])
+    def save_uss_file():
+        """Save or create USS file"""
+        try:
+            data = request.get_json()
+            path = data.get('path', '').strip()
+            content = data.get('content', '')
+            
+            if not path:
+                return jsonify({"error": "Path parameter is required"}), 400
+            
+            mock_mode = current_app.config.get('MOCK_MODE', True)
+            
+            if mock_mode:
+                print(f"MOCK: Saving USS file {path}")
+                return jsonify({
+                    "success": True,
+                    "message": f"File {path} saved successfully (MOCK)",
+                    "mock": True
+                })
+            
+            # Real mainframe operation
+            import tempfile
+            with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt', encoding='utf-8') as tmp:
+                tmp.write(content)
+                tmp_path = tmp.name
+            
+            try:
+                cmd = f'zowe files upload file-to-uss "{tmp_path}" "{path}"'
+                print(f"Saving USS file: {cmd}")
+                output = run_zowe(cmd)
+                
+                return jsonify({
+                    "success": True,
+                    "message": f"File {path} saved successfully",
+                    "mock": False
+                })
+            finally:
+                if os.path.exists(tmp_path):
+                    os.unlink(tmp_path)
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error saving USS file:\n{error_trace}")
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+    @app.route("/api/uss/file", methods=["DELETE"])
+    def delete_uss_file():
+        """Delete USS file or directory"""
+        try:
+            path = request.args.get('path', '').strip()
+            
+            if not path:
+                return jsonify({"error": "Path parameter is required"}), 400
+            
+            mock_mode = current_app.config.get('MOCK_MODE', True)
+            
+            if mock_mode:
+                print(f"MOCK: Deleting USS file/directory {path}")
+                return jsonify({
+                    "success": True,
+                    "message": f"Item {path} deleted successfully (MOCK)",
+                    "mock": True
+                })
+            
+            # Real mainframe operation
+            # Use recursive flag for directories
+            cmd = f'zowe files delete uss "{path}" --for-sure --recursive'
+            print(f"Deleting USS item: {cmd}")
+            
+            try:
+                output = run_zowe(cmd)
+            except Exception as e:
+                # If recursive fails, try without it (for files)
+                cmd = f'zowe files delete uss "{path}" --for-sure'
+                output = run_zowe(cmd)
+            
+            return jsonify({
+                "success": True,
+                "message": f"Item {path} deleted successfully",
+                "mock": False
+            })
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error deleting USS item:\n{error_trace}")
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+    @app.route("/api/uss/directory", methods=["POST"])
+    def create_uss_directory():
+        """Create USS directory"""
+        try:
+            data = request.get_json()
+            path = data.get('path', '').strip()
+            
+            if not path:
+                return jsonify({"error": "Path parameter is required"}), 400
+            
+            mock_mode = current_app.config.get('MOCK_MODE', True)
+            
+            if mock_mode:
+                print(f"MOCK: Creating USS directory {path}")
+                return jsonify({
+                    "success": True,
+                    "message": f"Directory {path} created successfully (MOCK)",
+                    "mock": True
+                })
+            
+            # Real mainframe operation
+            cmd = f'zowe files create uss-directory "{path}"'
+            print(f"Creating USS directory: {cmd}")
+            output = run_zowe(cmd)
+            
+            return jsonify({
+                "success": True,
+                "message": f"Directory {path} created successfully",
+                "mock": False
+            })
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error creating USS directory:\n{error_trace}")
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+    @app.route("/api/uss/download", methods=["GET"])
+    def download_uss_file():
+        """Download USS file"""
+        try:
+            path = request.args.get('path', '').strip()
+            
+            if not path:
+                return jsonify({"error": "Path parameter is required"}), 400
+            
+            mock_mode = current_app.config.get('MOCK_MODE', True)
+            
+            if mock_mode:
+                from flask import Response
+                content = f"Mock content for {path}\nThis would be the actual file content."
+                filename = path.split('/')[-1]
+                return Response(
+                    content,
+                    mimetype='text/plain',
+                    headers={
+                        'Content-Disposition': f'attachment; filename={filename}'
+                    }
+                )
+            
+            # Real mainframe operation
+            import tempfile
+            import shutil
+            
+            tmp_dir = tempfile.mkdtemp()
+            filename = path.split('/')[-1]
+            local_path = os.path.join(tmp_dir, filename)
+            
+            try:
+                cmd = f'zowe files download uss-file "{path}" --file "{local_path}"'
+                print(f"Downloading USS file: {cmd}")
+                run_zowe(cmd)
+                
+                from flask import send_file
+                
+                def cleanup():
+                    try:
+                        shutil.rmtree(tmp_dir, ignore_errors=True)
+                    except:
+                        pass
+                
+                import atexit
+                atexit.register(cleanup)
+                
+                return send_file(
+                    local_path,
+                    as_attachment=True,
+                    download_name=filename
+                )
+            except Exception as e:
+                # Cleanup on error
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+                raise e
+            
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error downloading USS file:\n{error_trace}")
+            return jsonify({"error": str(e)}), 500

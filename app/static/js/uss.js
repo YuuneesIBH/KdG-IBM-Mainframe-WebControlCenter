@@ -1,4 +1,4 @@
-let currentPath = '/u/zuser';
+let currentPath = '/u/' + 'zuser'; // of haal dit op van een API endpoint
 let files = [];
 
 function showUssState(state) {
