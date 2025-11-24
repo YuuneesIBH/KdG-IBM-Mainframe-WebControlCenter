@@ -1,352 +1,352 @@
 [
   {
     "type": "success",
-    "title": "Job CHKJCL1 completed by Z60976",
-    "meta": "Job ID: JOB07286 \u2022 CC 0000",
+    "title": "Job CBLJSONJ completed by Z83602",
+    "meta": "Job ID: JOB01016 \u2022 CC 0000",
     "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:41:37.554262"
-  },
-  {
-    "type": "danger",
-    "title": "Job Z77962 failed by Z77962",
-    "meta": "Job ID: JOB07287 \u2022 JCL ERROR",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:41:37.553755"
-  },
-  {
-    "type": "danger",
-    "title": "Job Z77962 failed by Z77962",
-    "meta": "Job ID: JOB07290 \u2022 JCL ERROR",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:41:37.552806"
-  },
-  {
-    "type": "danger",
-    "title": "Job PLICNT failed by Z79779",
-    "meta": "Job ID: JOB07259 \u2022 JCL ERROR",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:37:33.305659"
-  },
-  {
-    "type": "danger",
-    "title": "Job @ASM1 failed by Z73558",
-    "meta": "Job ID: JOB07261 \u2022 CC 0127",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:37:33.305268"
-  },
-  {
-    "type": "danger",
-    "title": "Job PAYROL0X failed by Z51172",
-    "meta": "Job ID: JOB07265 \u2022 CC 0012",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:37:33.304885"
-  },
-  {
-    "type": "danger",
-    "title": "Job @ASM1 failed by Z73558",
-    "meta": "Job ID: JOB07268 \u2022 CC 0127",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:37:33.304496"
+    "timestamp": "2025-11-24T21:40:24.265397"
   },
   {
     "type": "success",
-    "title": "Job @SDSF1 completed by Z79874",
-    "meta": "Job ID: JOB07271 \u2022 CC 0000",
+    "title": "Job @APDS2 completed by Z82642",
+    "meta": "Job ID: JOB01039 \u2022 CC 0000",
     "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:37:33.304132"
-  },
-  {
-    "type": "danger",
-    "title": "Job @ASM1 failed by Z73558",
-    "meta": "Job ID: JOB07272 \u2022 CC 0127",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:37:33.303766"
-  },
-  {
-    "type": "danger",
-    "title": "Job JCLSETUP failed by Z80854",
-    "meta": "Job ID: JOB07274 \u2022 JCL ERROR",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:37:33.303230"
-  },
-  {
-    "type": "success",
-    "title": "Job @ACLI completed by Z83185",
-    "meta": "Job ID: JOB07273 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:37:33.302880"
-  },
-  {
-    "type": "danger",
-    "title": "Job Z77962 failed by Z77962",
-    "meta": "Job ID: JOB07277 \u2022 JCL ERROR",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:37:33.302477"
-  },
-  {
-    "type": "danger",
-    "title": "Job JCLSETUP failed by Z80854",
-    "meta": "Job ID: JOB07279 \u2022 JCL ERROR",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:37:33.302036"
-  },
-  {
-    "type": "danger",
-    "title": "Job Z77962 failed by Z77962",
-    "meta": "Job ID: JOB07280 \u2022 JCL ERROR",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:37:33.301416"
-  },
-  {
-    "type": "success",
-    "title": "Job PAYROL00 completed by Z51172",
-    "meta": "Job ID: JOB07251 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:28:33.638495"
-  },
-  {
-    "type": "danger",
-    "title": "Job @ASM1 failed by Z73558",
-    "meta": "Job ID: JOB07252 \u2022 CC 0127",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:28:33.637714"
-  },
-  {
-    "type": "success",
-    "title": "Job @VSC1 completed by Z77948",
-    "meta": "Job ID: JOB07255 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:28:33.634298"
-  },
-  {
-    "type": "danger",
-    "title": "Job @ASM1 failed by Z73558",
-    "meta": "Job ID: JOB07256 \u2022 CC 0127",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:28:33.632912"
-  },
-  {
-    "type": "danger",
-    "title": "Job @ASM1 failed by Z73558",
-    "meta": "Job ID: JOB07257 \u2022 CC 0127",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:28:33.632320"
-  },
-  {
-    "type": "danger",
-    "title": "Job LS2WS1 failed by Z37412",
-    "meta": "Job ID: JOB07248 \u2022 JCL ERROR",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:23:54.247942"
-  },
-  {
-    "type": "success",
-    "title": "Job OVRIDEJB completed by Z77962",
-    "meta": "Job ID: JOB07246 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:54.247019"
-  },
-  {
-    "type": "success",
-    "title": "Job UPDATE completed by Z79199",
-    "meta": "Job ID: JOB06269 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.169111"
-  },
-  {
-    "type": "danger",
-    "title": "Job Z79199ID failed by Z79199",
-    "meta": "Job ID: JOB06281 \u2022 CC 0012",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.168693"
-  },
-  {
-    "type": "success",
-    "title": "Job CBL0007J completed by Z78780",
-    "meta": "Job ID: JOB06282 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.168249"
-  },
-  {
-    "type": "danger",
-    "title": "Job Z79199C failed by Z79199",
-    "meta": "Job ID: JOB06290 \u2022 CC 0012",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.167827"
-  },
-  {
-    "type": "success",
-    "title": "Job CREATE completed by Z76912",
-    "meta": "Job ID: JOB06297 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.167392"
-  },
-  {
-    "type": "success",
-    "title": "Job @VSC1 completed by Z86218",
-    "meta": "Job ID: JOB06301 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.166887"
-  },
-  {
-    "type": "success",
-    "title": "Job NEWJOB completed by Z79199",
-    "meta": "Job ID: JOB06311 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.166346"
-  },
-  {
-    "type": "success",
-    "title": "Job JCLSETUP completed by Z33439",
-    "meta": "Job ID: JOB06348 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.165889"
-  },
-  {
-    "type": "success",
-    "title": "Job UNCAT completed by Z79199",
-    "meta": "Job ID: JOB06349 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.165181"
-  },
-  {
-    "type": "success",
-    "title": "Job JCLRESET completed by Z33439",
-    "meta": "Job ID: JOB06361 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.164645"
-  },
-  {
-    "type": "success",
-    "title": "Job ASMPGM completed by Z75271",
-    "meta": "Job ID: JOB06382 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.164115"
-  },
-  {
-    "type": "success",
-    "title": "Job @IZUUI completed by Z84769",
-    "meta": "Job ID: JOB06386 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.163577"
-  },
-  {
-    "type": "success",
-    "title": "Job @FILES1 completed by Z86218",
-    "meta": "Job ID: JOB06397 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.163043"
-  },
-  {
-    "type": "success",
-    "title": "Job RUNHELLO completed by Z67670",
-    "meta": "Job ID: JOB06403 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.162327"
-  },
-  {
-    "type": "success",
-    "title": "Job JCLSETUP completed by Z86218",
-    "meta": "Job ID: JOB06414 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.161900"
-  },
-  {
-    "type": "success",
-    "title": "Job DELETE completed by Z76912",
-    "meta": "Job ID: JOB06415 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.161483"
-  },
-  {
-    "type": "success",
-    "title": "Job CBL0001J completed by Z54243",
-    "meta": "Job ID: JOB06422 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.161056"
-  },
-  {
-    "type": "danger",
-    "title": "Job JANKEN failed by Z67670",
-    "meta": "Job ID: JOB06425 \u2022 JCL ERROR",
-    "icon": "x-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.160641"
-  },
-  {
-    "type": "success",
-    "title": "Job JCL1 completed by Z86218",
-    "meta": "Job ID: JOB06440 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.160224"
-  },
-  {
-    "type": "success",
-    "title": "Job @REXX1 completed by Z84952",
-    "meta": "Job ID: JOB06450 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.159741"
-  },
-  {
-    "type": "success",
-    "title": "Job JCL1 completed by Z33439",
-    "meta": "Job ID: JOB06469 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.159168"
-  },
-  {
-    "type": "success",
-    "title": "Job @VSC1 completed by Z86221",
-    "meta": "Job ID: JOB06470 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.158766"
-  },
-  {
-    "type": "success",
-    "title": "Job COPYJOB completed by Z76912",
-    "meta": "Job ID: JOB06481 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.158368"
-  },
-  {
-    "type": "success",
-    "title": "Job @@OMP$3 completed by Z62129",
-    "meta": "Job ID: JOB06519 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.157961"
-  },
-  {
-    "type": "success",
-    "title": "Job JCL2 completed by Z86218",
-    "meta": "Job ID: JOB06530 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.157553"
-  },
-  {
-    "type": "success",
-    "title": "Job @SDSF1 completed by Z80069",
-    "meta": "Job ID: JOB06532 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.157118"
-  },
-  {
-    "type": "success",
-    "title": "Job PAYROL00 completed by Z77122",
-    "meta": "Job ID: JOB06537 \u2022 CC 0000",
-    "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.156637"
+    "timestamp": "2025-11-24T21:40:24.264939"
   },
   {
     "type": "success",
     "title": "Job MYJOB completed by Z79199",
-    "meta": "Job ID: JOB06549 \u2022 CC 0000",
+    "meta": "Job ID: JOB01044 \u2022 CC 0000",
     "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.156215"
+    "timestamp": "2025-11-24T21:40:24.264587"
   },
   {
     "type": "success",
-    "title": "Job @IZUUI completed by Z58550",
-    "meta": "Job ID: JOB06550 \u2022 CC 0000",
+    "title": "Job CBLJSONJ completed by Z84378",
+    "meta": "Job ID: JOB01046 \u2022 CC 0000",
     "icon": "check-circle-fill",
-    "timestamp": "2025-11-23T19:23:25.155785"
+    "timestamp": "2025-11-24T21:40:24.264177"
+  },
+  {
+    "type": "success",
+    "title": "Job @JCL1 completed by Z80710",
+    "meta": "Job ID: JOB01057 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.263696"
+  },
+  {
+    "type": "success",
+    "title": "Job @APDS2 completed by Z86271",
+    "meta": "Job ID: JOB01061 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.262987"
+  },
+  {
+    "type": "success",
+    "title": "Job JCLSETUP completed by Z86240",
+    "meta": "Job ID: JOB01080 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.262187"
+  },
+  {
+    "type": "success",
+    "title": "Job @ASM1 completed by Z85037",
+    "meta": "Job ID: JOB01084 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.261345"
+  },
+  {
+    "type": "success",
+    "title": "Job DEFVSAM completed by Z79199",
+    "meta": "Job ID: JOB01086 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.260731"
+  },
+  {
+    "type": "success",
+    "title": "Job Z76905 completed by Z76905",
+    "meta": "Job ID: JOB01111 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.260184"
+  },
+  {
+    "type": "danger",
+    "title": "Job RUNSEQ1 failed by Z79199",
+    "meta": "Job ID: JOB01116 \u2022 JCL ERROR",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.259219"
+  },
+  {
+    "type": "success",
+    "title": "Job @VSC1 completed by Z86184",
+    "meta": "Job ID: JOB01125 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.258820"
+  },
+  {
+    "type": "danger",
+    "title": "Job RUNSEQ1 failed by Z79199",
+    "meta": "Job ID: JOB01132 \u2022 ABEND S806",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.258275"
+  },
+  {
+    "type": "success",
+    "title": "Job TESTJOB completed by Z85734",
+    "meta": "Job ID: JOB01136 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.257378"
+  },
+  {
+    "type": "danger",
+    "title": "Job @CICSHW failed by Z63170",
+    "meta": "Job ID: JOB01140 \u2022 CC 0127",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.255607"
+  },
+  {
+    "type": "danger",
+    "title": "Job CBLJSONJ failed by Z86271",
+    "meta": "Job ID: JOB01151 \u2022 CC 0012",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.254890"
+  },
+  {
+    "type": "success",
+    "title": "Job VSAMDEF completed by Z79199",
+    "meta": "Job ID: JOB01155 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.253972"
+  },
+  {
+    "type": "success",
+    "title": "Job HELLOCBL completed by Z73826",
+    "meta": "Job ID: JOB01153 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.253189"
+  },
+  {
+    "type": "danger",
+    "title": "Job RUNSEQ1 failed by Z79199",
+    "meta": "Job ID: JOB01156 \u2022 JCL ERROR",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.251790"
+  },
+  {
+    "type": "danger",
+    "title": "Job RUNSEQ1 failed by Z79199",
+    "meta": "Job ID: JOB01170 \u2022 ABEND S806",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.250495"
+  },
+  {
+    "type": "success",
+    "title": "Job LISTCAT completed by Z85734",
+    "meta": "Job ID: JOB01175 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.248659"
+  },
+  {
+    "type": "success",
+    "title": "Job @@OMP$1 completed by Z73826",
+    "meta": "Job ID: JOB01178 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.248291"
+  },
+  {
+    "type": "danger",
+    "title": "Job PRINTVSA failed by Z85734",
+    "meta": "Job ID: JOB01191 \u2022 JCL ERROR",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.247692"
+  },
+  {
+    "type": "success",
+    "title": "Job PRINTVS completed by Z85734",
+    "meta": "Job ID: JOB01194 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.246503"
+  },
+  {
+    "type": "success",
+    "title": "Job @APDS1 completed by Z78983",
+    "meta": "Job ID: JOB01195 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.245861"
+  },
+  {
+    "type": "success",
+    "title": "Job ASMPGM completed by Z85037",
+    "meta": "Job ID: JOB01196 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.245413"
+  },
+  {
+    "type": "success",
+    "title": "Job DFHCOBCL completed by Z63170",
+    "meta": "Job ID: JOB01197 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.244904"
+  },
+  {
+    "type": "success",
+    "title": "Job JCLRESET completed by Z86240",
+    "meta": "Job ID: JOB01202 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.244242"
+  },
+  {
+    "type": "success",
+    "title": "Job REPRO2 completed by Z85734",
+    "meta": "Job ID: JOB01212 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.242056"
+  },
+  {
+    "type": "danger",
+    "title": "Job @CODE failed by Z33439",
+    "meta": "Job ID: JOB01218 \u2022 CC 0127",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.241734"
+  },
+  {
+    "type": "success",
+    "title": "Job PDSBUILD completed by Z86241",
+    "meta": "Job ID: JOB01227 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.241418"
+  },
+  {
+    "type": "danger",
+    "title": "Job @HCD0 failed by Z74057",
+    "meta": "Job ID: JOB01234 \u2022 CC 0127",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.241079"
+  },
+  {
+    "type": "danger",
+    "title": "Job PRINTVSA failed by Z85734",
+    "meta": "Job ID: JOB01249 \u2022 JCL ERROR",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.240724"
+  },
+  {
+    "type": "danger",
+    "title": "Job @FILES1 failed by Z86241",
+    "meta": "Job ID: JOB01254 \u2022 CC 0127",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.240319"
+  },
+  {
+    "type": "success",
+    "title": "Job @APDS2 completed by Z78983",
+    "meta": "Job ID: JOB01259 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.239902"
+  },
+  {
+    "type": "success",
+    "title": "Job JCL4 completed by Z59945",
+    "meta": "Job ID: JOB01265 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.239579"
+  },
+  {
+    "type": "success",
+    "title": "Job CICS4ZXP completed by Z63170",
+    "meta": "Job ID: JOB01272 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.239218"
+  },
+  {
+    "type": "success",
+    "title": "Job CICS4ZXP completed by Z83660",
+    "meta": "Job ID: JOB01281 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.238805"
+  },
+  {
+    "type": "danger",
+    "title": "Job CXZ63170 failed by Z63170",
+    "meta": "Job ID: JOB01273 \u2022 CANCELED",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.237089"
+  },
+  {
+    "type": "success",
+    "title": "Job JCL1 completed by Z85407",
+    "meta": "Job ID: JOB01285 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.236421"
+  },
+  {
+    "type": "success",
+    "title": "Job ASMPGM completed by Z85734",
+    "meta": "Job ID: JOB01289 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.235962"
+  },
+  {
+    "type": "success",
+    "title": "Job @APDS1 completed by Z83542",
+    "meta": "Job ID: JOB01293 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.235061"
+  },
+  {
+    "type": "success",
+    "title": "Job @USS1 completed by Z80710",
+    "meta": "Job ID: JOB01296 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.234326"
+  },
+  {
+    "type": "success",
+    "title": "Job @REXX1 completed by Z81185",
+    "meta": "Job ID: JOB01300 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.233757"
+  },
+  {
+    "type": "danger",
+    "title": "Job JCLCOMPM failed by Z09172",
+    "meta": "Job ID: JOB01302 \u2022 CC 0012",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.233446"
+  },
+  {
+    "type": "danger",
+    "title": "Job CXZ83660 failed by Z83660",
+    "meta": "Job ID: JOB01282 \u2022 CC 0012",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.233132"
+  },
+  {
+    "type": "danger",
+    "title": "Job @CICSZ failed by Z83660",
+    "meta": "Job ID: JOB01308 \u2022 CC 0127",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.232816"
+  },
+  {
+    "type": "success",
+    "title": "Job GOKSDS completed by Z78358",
+    "meta": "Job ID: JOB01309 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.232465"
+  },
+  {
+    "type": "success",
+    "title": "Job CICS4ZXP completed by Z83660",
+    "meta": "Job ID: JOB01312 \u2022 CC 0000",
+    "icon": "check-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.231946"
+  },
+  {
+    "type": "danger",
+    "title": "Job DFHCOBCL failed by Z63170",
+    "meta": "Job ID: JOB01311 \u2022 JCL ERROR",
+    "icon": "x-circle-fill",
+    "timestamp": "2025-11-24T21:40:24.231364"
   }
 ]

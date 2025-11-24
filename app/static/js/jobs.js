@@ -1,6 +1,7 @@
 let currentOwner = '*';
 let currentPrefix = '*';
 let jobs = [];
+let allJobs = [];
 let selectedJobId = null;
 
 function showJobsState(state) {
@@ -22,9 +23,6 @@ async function loadJobs() {
     
     try {
         let url = `/api/jobs?owner=${encodeURIComponent(owner)}&prefix=${encodeURIComponent(prefix)}`;
-        if (status !== 'ALL') {
-            url += `&status=${encodeURIComponent(status)}`;
-        }
         
         const response = await fetch(url);
         const data = await response.json();
@@ -33,16 +31,22 @@ async function loadJobs() {
             throw new Error(data.error);
         }
 
-        jobs = data.jobs || [];
+        allJobs = data.jobs || [];
+        
+        if (status !== 'ALL') {
+            jobs = allJobs.filter(j => j.status === status);
+        } else {
+            jobs = allJobs;
+        }
+        
+        updateStats();
         
         if (jobs.length === 0) {
             showJobsState('empty');
-            updateStats();
             return;
         }
 
         renderJobs();
-        updateStats();
         showJobsState('data');
     } catch (error) {
         document.getElementById('errorMessage').textContent = error.message;
@@ -97,11 +101,11 @@ function getStatusClass(status) {
 }
 
 function updateStats() {
-    const activeCount = jobs.filter(j => j.status === 'ACTIVE' || j.status === 'INPUT').length;
-    const outputCount = jobs.filter(j => j.status === 'OUTPUT').length;
-    const errorCount = jobs.filter(j => j.status === 'ABEND').length;
+    const activeCount = allJobs.filter(j => j.status === 'ACTIVE' || j.status === 'INPUT').length;
+    const outputCount = allJobs.filter(j => j.status === 'OUTPUT').length;
+    const errorCount = allJobs.filter(j => j.status === 'ABEND').length;
     
-    document.getElementById('totalJobs').textContent = jobs.length;
+    document.getElementById('totalJobs').textContent = allJobs.length;
     document.getElementById('activeJobs').textContent = activeCount;
     document.getElementById('completedJobs').textContent = outputCount;
 }
@@ -268,10 +272,8 @@ async function purgeJob(jobid) {
         
         alert(`Job ${jobid} purged successfully`);
         
-        // Reload jobs list
         await loadJobs();
         
-        // Clear details panel
         document.getElementById('detailsEmptyState').style.display = 'block';
         document.getElementById('jobDetails').style.display = 'none';
         
