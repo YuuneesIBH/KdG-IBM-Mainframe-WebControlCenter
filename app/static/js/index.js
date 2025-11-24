@@ -131,3 +131,93 @@ document.addEventListener('DOMContentLoaded', () => {
 setInterval(loadDashboardData, 30000);
 setInterval(loadRecentActivities, 30000);
 setInterval(syncMainframeJobs, 60000);
+
+// System Status Functions
+async function loadSystemStatus() {
+    console.log('🔄 Loading system status...');
+    
+    try {
+        const response = await fetch('/api/system-status');
+        const data = await response.json();
+        
+        console.log('📊 System status data:', data);
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to load system status');
+        }
+        
+        // Update CPU Usage
+        const cpuElement = document.getElementById('cpu-usage');
+        if (cpuElement) {
+            cpuElement.textContent = data.cpu_usage + '%';
+            cpuElement.style.color = `var(--${getCpuColor(data.cpu_usage)})`;
+        }
+        
+        // Update Uptime
+        const uptimeElement = document.getElementById('uptime-value');
+        if (uptimeElement) {
+            uptimeElement.textContent = data.uptime;
+        }
+        
+        // Update Disk Space
+        const diskElement = document.getElementById('disk-space');
+        if (diskElement) {
+            diskElement.textContent = data.disk_free_percent + '%';
+            diskElement.style.color = `var(--${getDiskColor(data.disk_free_percent)})`;
+        }
+        
+        // Update Active Users
+        const usersElement = document.getElementById('active-users-value');
+        if (usersElement) {
+            usersElement.textContent = data.active_users;
+        }
+        
+        console.log('✅ System status loaded successfully');
+        
+    } catch (error) {
+        console.error('❌ Error loading system status:', error);
+        
+        // Show error in UI
+        ['cpu-usage', 'uptime-value', 'disk-space', 'active-users-value'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = 'Error';
+                element.style.color = 'var(--danger)';
+            }
+        });
+    }
+}
+
+function getCpuColor(usage) {
+    if (usage < 50) return 'success';
+    if (usage < 75) return 'warning';
+    return 'danger';
+}
+
+function getDiskColor(freePercent) {
+    if (freePercent > 50) return 'success';
+    if (freePercent > 25) return 'warning';
+    return 'danger';
+}
+
+// Make function globally available for onclick
+window.loadSystemStatus = loadSystemStatus;
+
+// Check if we're on the dashboard page and auto-load
+if (window.location.pathname === '/' || window.location.pathname === '/index') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 Dashboard loaded, initializing system status...');
+            loadSystemStatus();
+            
+            // Refresh every 30 seconds
+            setInterval(loadSystemStatus, 30000);
+        });
+    } else {
+        console.log('📄 Dashboard already loaded, initializing system status...');
+        loadSystemStatus();
+        
+        // Refresh every 30 seconds
+        setInterval(loadSystemStatus, 30000);
+    }
+}

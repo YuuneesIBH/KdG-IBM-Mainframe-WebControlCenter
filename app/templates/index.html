@@ -179,11 +179,14 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">
                     <i class="bi bi-info-circle-fill" style="color: var(--primary);"></i>
                     System Status
                 </h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="loadSystemStatus()">
+                    <i class="bi bi-arrow-repeat"></i> Refresh
+                </button>
             </div>
             <div class="card-body p-0">
                 <div class="row g-0">
@@ -191,7 +194,9 @@
                         <div class="status-metric">
                             <i class="bi bi-cpu-fill" style="color: var(--primary);"></i>
                             <div class="status-label">CPU Usage</div>
-                            <div class="status-value">34%</div>
+                            <div class="status-value" id="cpu-usage">
+                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                            </div>
                         </div>
                     </div>
 
@@ -199,7 +204,9 @@
                         <div class="status-metric">
                             <i class="bi bi-clock-fill" style="color: var(--success);"></i>
                             <div class="status-label">Uptime</div>
-                            <div class="status-value">45d 12h</div>
+                            <div class="status-value" id="uptime-value" style="color: var(--success);">
+                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                            </div>
                         </div>
                     </div>
 
@@ -207,7 +214,9 @@
                         <div class="status-metric">
                             <i class="bi bi-hdd-fill" style="color: var(--info);"></i>
                             <div class="status-label">Disk Space</div>
-                            <div class="status-value">67%</div>
+                            <div class="status-value" id="disk-space">
+                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                            </div>
                             <small class="text-muted">Free</small>
                         </div>
                     </div>
@@ -216,7 +225,9 @@
                         <div class="status-metric">
                             <i class="bi bi-people-fill" style="color: var(--warning);"></i>
                             <div class="status-label">Active Users</div>
-                            <div class="status-value">8</div>
+                            <div class="status-value" id="active-users-value" style="color: var(--warning);">
+                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                            </div>
                         </div>
                     </div>
                 </div>

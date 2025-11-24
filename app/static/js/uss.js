@@ -1,4 +1,4 @@
-let currentPath = '/u/zuser';
+let currentPath = '/u/';
 let files = [];
 
 function showUssState(state) {
@@ -57,7 +57,7 @@ function renderFiles() {
         const modified = file.modified || 'Unknown';
         
         return `
-            <div class="uss-item" onclick="handleFileClick('${escapeHtml(file.name)}', '${file.type}')">
+            <div class="uss-item" data-filename="${escapeHtml(file.name)}" data-type="${file.type}">
                 <div class="uss-icon ${file.type}">
                     <i class="bi ${icon}"></i>
                 </div>
@@ -80,25 +80,74 @@ function renderFiles() {
                         </span>
                     </div>
                 </div>
-                <div class="uss-actions" onclick="event.stopPropagation()">
+                <div class="uss-actions">
                     ${file.type !== 'directory' ? `
-                    <button class="uss-action-btn" onclick="viewFile('${escapeHtml(file.name)}')" title="View">
+                    <button class="uss-action-btn btn-view" title="View">
                         <i class="bi bi-eye"></i>
                     </button>
-                    <button class="uss-action-btn" onclick="editFile('${escapeHtml(file.name)}')" title="Edit">
+                    <button class="uss-action-btn btn-edit" title="Edit">
                         <i class="bi bi-pencil"></i>
                     </button>
-                    <button class="uss-action-btn" onclick="downloadFile('${escapeHtml(file.name)}')" title="Download">
+                    <button class="uss-action-btn btn-download" title="Download">
                         <i class="bi bi-download"></i>
                     </button>
                     ` : ''}
-                    <button class="uss-action-btn" onclick="deleteFile('${escapeHtml(file.name)}', '${file.type}')" title="Delete">
+                    <button class="uss-action-btn btn-delete" title="Delete">
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>
             </div>
         `;
     }).join('');
+    
+    attachFileEventListeners();
+}
+
+function attachFileEventListeners() {
+    const container = document.getElementById('fileBrowser');
+    
+    container.querySelectorAll('.uss-item').forEach(item => {
+        const filename = item.getAttribute('data-filename');
+        const type = item.getAttribute('data-type');
+        
+        item.addEventListener('click', (e) => {
+            if (!e.target.closest('.uss-actions')) {
+                handleFileClick(filename, type);
+            }
+        });
+        
+        const viewBtn = item.querySelector('.btn-view');
+        if (viewBtn) {
+            viewBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                viewFile(filename);
+            });
+        }
+        
+        const editBtn = item.querySelector('.btn-edit');
+        if (editBtn) {
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                editFile(filename);
+            });
+        }
+        
+        const downloadBtn = item.querySelector('.btn-download');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                downloadFile(filename);
+            });
+        }
+        
+        const deleteBtn = item.querySelector('.btn-delete');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteFile(filename, type);
+            });
+        }
+    });
 }
 
 function getFileIcon(file) {
@@ -174,6 +223,8 @@ function handleFileClick(name, type) {
 async function viewFile(filename) {
     const filepath = currentPath.endsWith('/') ? currentPath + filename : currentPath + '/' + filename;
     
+    console.log('Opening file:', filepath); // Debug log
+    
     try {
         const response = await fetch(`/api/uss/file?path=${encodeURIComponent(filepath)}`);
         const data = await response.json();
@@ -184,12 +235,16 @@ async function viewFile(filename) {
 
         showFileModal('View File', filename, data.content, true);
     } catch (error) {
+        console.error('Error viewing file:', error);
         alert(`Error viewing file: ${error.message}`);
     }
 }
 
+
 async function editFile(filename) {
     const filepath = currentPath.endsWith('/') ? currentPath + filename : currentPath + '/' + filename;
+    
+    console.log('Editing file:', filepath); // Debug log
     
     try {
         const response = await fetch(`/api/uss/file?path=${encodeURIComponent(filepath)}`);
@@ -201,6 +256,7 @@ async function editFile(filename) {
 
         showFileModal('Edit File', filename, data.content, false);
     } catch (error) {
+        console.error('Error loading file:', error);
         alert(`Error loading file: ${error.message}`);
     }
 }
@@ -253,7 +309,16 @@ async function saveFile(filename) {
 
 async function downloadFile(filename) {
     const filepath = currentPath.endsWith('/') ? currentPath + filename : currentPath + '/' + filename;
-    window.location.href = `/api/uss/download?path=${encodeURIComponent(filepath)}`;
+    
+    console.log('Downloading file:', filepath); // Debug log
+    
+    try {
+        // Open download in nieuw venster/tab
+        window.open(`/api/uss/download?path=${encodeURIComponent(filepath)}`, '_blank');
+    } catch (error) {
+        console.error('Error downloading file:', error);
+        alert(`Error downloading file: ${error.message}`);
+    }
 }
 
 async function deleteFile(filename, type) {
