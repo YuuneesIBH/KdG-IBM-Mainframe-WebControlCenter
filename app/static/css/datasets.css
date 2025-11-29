@@ -40,6 +40,29 @@
 #datasetList, #membersList {
     max-height: 600px;
     overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+#datasetList::-webkit-scrollbar,
+#membersList::-webkit-scrollbar {
+    width: 8px;
+}
+
+#datasetList::-webkit-scrollbar-track,
+#membersList::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
+#datasetList::-webkit-scrollbar-thumb,
+#membersList::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+#datasetList::-webkit-scrollbar-thumb:hover,
+#membersList::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
 }
 
 .btn-primary-custom {
@@ -73,4 +96,207 @@
 
 .btn-primary-custom i {
     font-size: 16px;
+}
+
+.dataset-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dataset-item:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.dataset-pds {
+    border-left: 4px solid #3b82f6;
+}
+
+.dataset-pds:hover {
+    background: linear-gradient(to right, #eff6ff 0%, #f8fafc 100%);
+}
+
+.dataset-ps {
+    border-left: 4px solid #10b981;
+}
+
+.dataset-ps:hover {
+    background: linear-gradient(to right, #ecfdf5 0%, #f8fafc 100%);
+}
+
+.dataset-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.dataset-pds .dataset-icon {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
+.dataset-ps .dataset-icon {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.dataset-icon i {
+    font-size: 1.5rem;
+}
+
+.dataset-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.dataset-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+    font-family: 'Courier New', monospace;
+}
+
+.dataset-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.badge-primary {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-info {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.dataset-meta .text-muted {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.dataset-meta .text-muted i {
+    font-size: 0.875rem;
+}
+
+.dataset-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1rem;
+}
+
+.dataset-actions i {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    transition: all 0.2s ease;
+}
+
+.dataset-item:hover .dataset-actions i {
+    color: #3b82f6;
+    transform: translateX(2px);
+}
+
+.member-item {
+    display: flex;
+    align-items: center;
+    padding: 0.875rem 1rem;
+    margin-bottom: 0.5rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #8b5cf6;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.member-item:hover {
+    background: #f8fafc;
+    border-left-width: 4px;
+    transform: translateX(2px);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1);
+}
+
+.member-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+    margin-right: 0.875rem;
+    flex-shrink: 0;
+}
+
+.member-icon i {
+    font-size: 1.125rem;
+}
+
+.member-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.member-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1e293b;
+    margin-bottom: 0.125rem;
+    font-family: 'Courier New', monospace;
+}
+
+.member-meta {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.member-actions {
+    display: flex;
+    align-items: center;
+    margin-left: 0.75rem;
+}
+
+.member-actions i {
+    font-size: 1.125rem;
+    color: #94a3b8;
+    transition: all 0.2s ease;
+}
+
+.member-item:hover .member-actions i {
+    color: #8b5cf6;
+    transform: translateX(2px);
 }
