@@ -189,6 +189,7 @@ body::before {
     position: relative;
     overflow: hidden;
     background: linear-gradient(135deg, var(--bg-glass) 0%, var(--bg-glass-hover) 100%);
+    cursor: pointer;
 }
 
 .stat-card::before {
@@ -230,6 +231,7 @@ body::before {
     right: 1rem;
     bottom: 1rem;
     transition: all var(--transition-base);
+    pointer-events: none;
 }
 
 .stat-card:hover .stat-icon {

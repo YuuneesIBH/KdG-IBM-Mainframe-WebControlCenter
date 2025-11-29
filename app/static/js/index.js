@@ -215,3 +215,22 @@ if (window.location.pathname === '/' || window.location.pathname === '/index') {
         setInterval(loadSystemStatus, 30000);
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const statCards = document.querySelectorAll('.stat-card');
+    
+    statCards.forEach(card => {
+        const link = card.querySelector('.card-footer a');
+        
+        if (link) {
+            const href = link.getAttribute('href');
+            
+            card.addEventListener('click', function(e) {
+                if (e.target.tagName !== 'BUTTON' && 
+                    !e.target.closest('button')) {
+                    window.location.href = href;
+                }
+            });
+        }
+    });
+});

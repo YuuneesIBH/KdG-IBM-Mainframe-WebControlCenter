@@ -1,6 +1,6 @@
 const CONFIG = {
     apiBase: '/api',
-    refreshInterval: 30000, // 30 seconds
+    refreshInterval: 30000,
     animationDuration: 300
 };
 
@@ -8,7 +8,7 @@ const Utils = {
     formatDate(dateString) {
         const date = new Date(dateString);
         const now = new Date();
-        const diff = Math.floor((now - date) / 1000); // seconds
+        const diff = Math.floor((now - date) / 1000);
 
         if (diff < 60) return `${diff} seconds ago`;
         if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
