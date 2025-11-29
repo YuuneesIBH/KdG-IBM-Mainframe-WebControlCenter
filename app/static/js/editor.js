@@ -298,7 +298,11 @@ function showNewMemberModal() {
         showNotification('Please select a dataset first from the Datasets page', 'error');
         return;
     }
-    document.getElementById('newMemberModal').style.display = 'flex';
+    const modal = document.getElementById('newMemberModal');
+    modal.style.display = 'flex';
+    document.getElementById('newMemberName').value = '';
+    document.getElementById('charCount').textContent = '0/8 characters';
+    document.getElementById('charCount').classList.remove('warning');
     document.getElementById('newMemberName').focus();
 }
 
@@ -306,7 +310,7 @@ function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
 }
 
-function createNewMember() {
+async function createNewMember() {
     const memberName = document.getElementById('newMemberName').value.toUpperCase().trim();
     
     if (!memberName) {
@@ -326,17 +330,60 @@ function createNewMember() {
     
     closeModal('newMemberModal');
     
-    currentMember = memberName;
-    document.getElementById('memberName').textContent = memberName;
-    document.getElementById('codeEditor').value = '';
-    originalContent = '';
-    hasChanges = true;
-    updateSaveButton();
+    setSaveStatus('saving');
     
-    allMembers.push({name: memberName, created: new Date().toISOString().split('T')[0], modified: ''});
-    displayMembers(allMembers);
-    
-    saveMember();
-    
-    showNotification('New member created', 'success');
+    try {
+        const response = await fetch('/api/datasets/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                dataset: currentDataset,
+                member: memberName,
+                content: '' 
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            currentMember = memberName;
+            document.getElementById('memberName').textContent = memberName;
+            document.getElementById('codeEditor').value = '';
+            originalContent = '';
+            hasChanges = false;
+            updateSaveButton();
+            setSaveStatus('saved');
+            
+            allMembers.push({
+                name: memberName, 
+                created: new Date().toISOString().split('T')[0], 
+                modified: new Date().toISOString().split('T')[0]
+            });
+            displayMembers(allMembers);
+            
+            const newUrl = `${window.location.pathname}?dataset=${encodeURIComponent(currentDataset)}&member=${encodeURIComponent(memberName)}`;
+            window.history.pushState({}, '', newUrl);
+            
+            document.querySelectorAll('.member-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const newMemberItem = Array.from(document.querySelectorAll('.member-item')).find(
+                item => item.textContent.includes(memberName)
+            );
+            if (newMemberItem) {
+                newMemberItem.classList.add('active');
+            }
+            
+            showNotification(`Member ${memberName} created successfully!`, 'success');
+        } else {
+            setSaveStatus('error');
+            showNotification('Failed to create member: ' + (data.error || 'Unknown error'), 'error');
+        }
+    } catch (error) {
+        console.error('Error creating member:', error);
+        setSaveStatus('error');
+        showNotification('Failed to create member: ' + error.message, 'error');
+    }
 }

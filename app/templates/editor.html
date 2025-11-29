@@ -141,33 +141,71 @@
 </div>
 
 <div id="newMemberModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Create New Member</h5>
-            <button class="modal-close" onclick="closeModal('newMemberModal')">
+    <div class="modal-content modal-content-modern">
+        <div class="modal-header-modern">
+            <div class="modal-icon-wrapper">
+                <i class="bi bi-file-earmark-plus"></i>
+            </div>
+            <div class="modal-title-wrapper">
+                <h5 class="modal-title-modern">Create New Member</h5>
+                <p class="modal-subtitle">Add a new member to {{currentDataset}}</p>
+            </div>
+            <button class="modal-close-modern" onclick="closeModal('newMemberModal')">
                 <i class="bi bi-x"></i>
             </button>
         </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label class="form-label">Member Name</label>
-                <div class="setting-description">Must be 1-8 characters (A-Z, 0-9, @, #, $)</div>
+        <div class="modal-body-modern">
+            <div class="form-group-modern">
+                <label class="form-label-modern">
+                    <i class="bi bi-tag"></i>
+                    Member Name
+                </label>
                 <input 
                     type="text" 
                     id="newMemberName" 
-                    class="form-input" 
-                    placeholder="e.g., MEMBER01"
+                    class="form-input-modern" 
+                    placeholder="MEMBER01"
                     maxlength="8"
                     style="text-transform: uppercase;"
                 >
+                <div class="form-help-text">
+                    <i class="bi bi-info-circle"></i>
+                    Must be 1-8 characters using A-Z, 0-9, @, #, or $
+                </div>
+            </div>
+            
+            <div class="naming-tips">
+                <div class="naming-tip-header">
+                    <i class="bi bi-lightbulb"></i>
+                    Naming Suggestions
+                </div>
+                <div class="naming-tip-list">
+                    <div class="naming-tip-item" onclick="document.getElementById('newMemberName').value = 'MAIN'">
+                        <span class="tip-name">MAIN</span>
+                        <span class="tip-desc">Main program</span>
+                    </div>
+                    <div class="naming-tip-item" onclick="document.getElementById('newMemberName').value = 'TEST'">
+                        <span class="tip-name">TEST</span>
+                        <span class="tip-desc">Test script</span>
+                    </div>
+                    <div class="naming-tip-item" onclick="document.getElementById('newMemberName').value = 'UTIL'">
+                        <span class="tip-name">UTIL</span>
+                        <span class="tip-desc">Utility code</span>
+                    </div>
+                    <div class="naming-tip-item" onclick="document.getElementById('newMemberName').value = 'CONFIG'">
+                        <span class="tip-name">CONFIG</span>
+                        <span class="tip-desc">Configuration</span>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="modal-actions">
-            <button class="btn-secondary-custom" onclick="closeModal('newMemberModal')">
+        <div class="modal-footer-modern">
+            <button class="btn-cancel-modern" onclick="closeModal('newMemberModal')">
+                <i class="bi bi-x-circle"></i>
                 Cancel
             </button>
-            <button class="btn-primary-custom" onclick="createNewMember()">
-                <i class="bi bi-file-plus"></i>
+            <button class="btn-create-modern" onclick="createNewMember()">
+                <i class="bi bi-plus-circle"></i>
                 Create Member
             </button>
         </div>
