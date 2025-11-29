@@ -151,9 +151,13 @@ async function loadSystemStatus() {
             cpuElement.style.color = `var(--${getCpuColor(data.cpu_usage)})`;
         }
         
-        const uptimeElement = document.getElementById('uptime-value');
-        if (uptimeElement) {
-            uptimeElement.textContent = data.uptime;
+        const activeJobsElement = document.getElementById('active-jobs-value');
+        if (activeJobsElement) {
+            activeJobsElement.textContent = data.active_jobs;
+            // Kleur: groen als 0-5, geel als 6-15, rood als 15+
+            const jobsColor = data.active_jobs <= 5 ? 'success' : 
+                             data.active_jobs <= 15 ? 'warning' : 'danger';
+            activeJobsElement.style.color = `var(--${jobsColor})`;
         }
         
         const diskElement = document.getElementById('disk-space');
@@ -162,9 +166,9 @@ async function loadSystemStatus() {
             diskElement.style.color = `var(--${getDiskColor(data.disk_free_percent)})`;
         }
         
-        const usersElement = document.getElementById('active-users-value');
-        if (usersElement) {
-            usersElement.textContent = data.active_users;
+        const tsoUsersElement = document.getElementById('tso-users-value');
+        if (tsoUsersElement) {
+            tsoUsersElement.textContent = data.tso_users;
         }
         
         console.log('✅ System status loaded successfully');
@@ -172,7 +176,7 @@ async function loadSystemStatus() {
     } catch (error) {
         console.error('❌ Error loading system status:', error);
         
-        ['cpu-usage', 'uptime-value', 'disk-space', 'active-users-value'].forEach(id => {
+        ['cpu-usage', 'active-jobs-value', 'disk-space', 'tso-users-value'].forEach(id => {
             const element = document.getElementById(id);
             if (element) {
                 element.textContent = 'Error';

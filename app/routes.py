@@ -214,25 +214,43 @@ def init_routes(app):
             if mock_mode:
                 return jsonify({
                     "cpu_usage": 34,
-                    "uptime": "45d 12h",
+                    "active_jobs": 12,
                     "disk_free_percent": 67,
-                    "active_users": 8,
-                    "active_jobs": 3,
-                    "system_load": 1.24,
+                    "tso_users": 8,
+                    "jobs_today": 156,
+                    "success_rate": 94.3,
+                    "failed_jobs": 9,
                     "mock": True
                 })
             
             user = os.environ.get("ZOS_USER")
             
             active_jobs = 0
+            jobs_today = 0
+            failed_jobs = 0
+            success_rate = 100.0
+            
             try:
                 jobs_cmd = 'zowe jobs list jobs --owner * --rfj'
                 jobs_output = run_zowe(jobs_cmd)
                 data = json.loads(jobs_output)
                 jobs_list = data.get('data', [])
+                
                 active_jobs = len([j for j in jobs_list if j.get('status') in ['ACTIVE', 'INPUT']])
+                
+                jobs_today = len(jobs_list)
+                
+                failed_jobs = len([j for j in jobs_list if j.get('retcode') and 
+                                j.get('retcode') != 'CC 0000' and 
+                                j.get('status') == 'OUTPUT'])
+                
+                completed_jobs = len([j for j in jobs_list if j.get('status') == 'OUTPUT'])
+                if completed_jobs > 0:
+                    successful_jobs = completed_jobs - failed_jobs
+                    success_rate = round((successful_jobs / completed_jobs) * 100, 1)
+                
             except Exception as e:
-                print(f"Error getting active jobs: {e}")
+                print(f"Error getting job statistics: {e}")
             
             disk_free_percent = 67
             try:
@@ -247,40 +265,24 @@ def init_routes(app):
             except Exception as e:
                 print(f"Error getting disk space: {e}")
             
-            uptime_str = "Unknown"
-            try:
-                uptime_cmd = 'zowe zos-uss issue ssh "uptime"'
-                uptime_output = run_zowe(uptime_cmd)
-                if 'up' in uptime_output:
-                    parts = uptime_output.split('up')[1].split(',')
-                    if 'day' in parts[0]:
-                        uptime_str = parts[0].strip()
-                        if len(parts) > 1 and ':' in parts[1]:
-                            hours = parts[1].strip().split(':')[0].strip()
-                            uptime_str = f"{parts[0].strip()} {hours}h"
-            except Exception as e:
-                print(f"Error getting uptime: {e}")
-                uptime_str = "45d 12h"
-            
-            active_users = 1
+            tso_users = 1
             try:
                 who_cmd = 'zowe zos-uss issue ssh "who | wc -l"'
                 who_output = run_zowe(who_cmd)
-                active_users = int(who_output.strip())
+                tso_users = int(who_output.strip())
             except Exception as e:
-                print(f"Error getting active users: {e}")
+                print(f"Error getting TSO users: {e}")
             
-            cpu_usage = min(34 + (active_jobs * 5), 95)
-            
-            system_load = round(active_jobs * 0.4, 2)
+            cpu_usage = min(20 + (active_jobs * 8), 95)
             
             return jsonify({
                 "cpu_usage": cpu_usage,
-                "uptime": uptime_str,
-                "disk_free_percent": disk_free_percent,
-                "active_users": active_users,
                 "active_jobs": active_jobs,
-                "system_load": system_load,
+                "disk_free_percent": disk_free_percent,
+                "tso_users": tso_users,
+                "jobs_today": jobs_today,
+                "success_rate": success_rate,
+                "failed_jobs": failed_jobs,
                 "mock": False
             })
             
@@ -291,11 +293,12 @@ def init_routes(app):
             return jsonify({
                 "error": str(e),
                 "cpu_usage": 0,
-                "uptime": "Unknown",
-                "disk_free_percent": 0,
-                "active_users": 0,
                 "active_jobs": 0,
-                "system_load": 0.0
+                "disk_free_percent": 0,
+                "tso_users": 0,
+                "jobs_today": 0,
+                "success_rate": 0,
+                "failed_jobs": 0
             }), 500
     
     @app.route("/api/jobs", methods=["GET"])

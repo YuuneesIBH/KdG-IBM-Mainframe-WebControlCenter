@@ -1,13 +1,10 @@
 {
   "synced_jobs": {
+    "JOB00389": true,
+    "JOB00381": true,
+    "JOB00376": true,
+    "JOB00377": true,
     "JOB00365": true,
-    "TSU00362": true,
-    "TSU00363": true,
-    "TSU00296": true,
-    "TSU00311": true,
-    "TSU00361": true,
-    "JOB00356": true,
-    "JOB00357": true,
     "JOB00349": true,
     "JOB00344": true,
     "JOB00333": true,
@@ -345,5 +342,5 @@
     "JOB06747": true,
     "STC00001": true
   },
-  "last_sync": "2025-11-29T12:14:13.153405"
+  "last_sync": "2025-11-29T12:25:30.442238"
 }
