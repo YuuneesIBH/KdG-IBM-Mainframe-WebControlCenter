@@ -1077,3 +1077,25 @@ def init_routes(app):
             return jsonify(result)
         else:
             return jsonify(result), 500
+        
+    @app.route("/api/zbot", methods=["POST"])
+    def zbot_chat():
+        try:
+            data = request.get_json()
+            user_message = data.get('message', '').strip()
+            code = data.get('code', '').strip()
+
+            from text_ai import ask_zbot
+            result = ask_zbot(user_message, code)
+
+            return jsonify(result)
+
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"Error in Z-Bot chat:\n{error_trace}")
+            return jsonify({
+                "success": False,
+                "response": "Sorry, I encountered an error. Please try again.",
+                "error": str(e)
+            }), 500

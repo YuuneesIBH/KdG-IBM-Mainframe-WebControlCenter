@@ -7,6 +7,27 @@
 {% endblock %}
 
 {% block content %}
+<div id="zbot-widget">
+    <div id="zbot-button">
+        💬
+    </div>
+
+    <div id="zbot-chatbox">
+        <div class="zbot-header">
+            <span>Nexus AI Assistant</span>
+            <button id="zbot-close">×</button>
+        </div>
+
+        <div id="zbot-messages"></div>
+
+        <div class="zbot-input">
+            <input id="zbot-text" type="text" placeholder="Ask Z-Bot...">
+            <button id="zbot-send">→</button>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/zbot.js') }}"></script>
 
 <div class="row mb-4">
     <div class="col-md-12">
@@ -215,5 +236,6 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{{ url_for('static', filename='js/nexus_ai.js') }}"></script>
 <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
 {% endblock %}

@@ -807,7 +807,6 @@
     font-size: 18px;
 }
 
-/* Smooth animations */
 @keyframes modalSlideIn {
     from {
         opacity: 0;
@@ -821,4 +820,198 @@
 
 .modal-content-modern {
     animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#zbot-widget {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    font-family: Inter, sans-serif;
+}
+
+#zbot-button {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(0, 122, 255, 0.35);
+    border: 2px solid rgba(0, 122, 255, 0.35);
+    backdrop-filter: blur(10px);
+    position: relative;
+    cursor: pointer;
+    transition: .3s ease;
+    box-shadow:
+        0 4px 18px rgba(0,122,255,0.35),
+        inset 0 0 12px rgba(255,255,255,0.10);
+}
+
+#zbot-button:hover {
+    background: rgba(0, 122, 255, 0.55);
+    transform: scale(1.08);
+    box-shadow:
+        0 4px 24px rgba(0,122,255,0.55),
+        inset 0 0 16px rgba(255,255,255,0.15);
+}
+
+#zbot-button::before {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #ffffff;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: zbotPulse 1.5s infinite ease-in-out;
+    box-shadow:
+        0 0 8px rgba(255,255,255,0.85),
+        0 0 14px rgba(255,255,255,0.45);
+}
+
+#zbot-button::after {
+    content: "";
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.6);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.9;
+    animation: zbotRingPulse 3s infinite ease-in-out;
+    box-shadow:
+        0 0 10px rgba(255,255,255,0.4),
+        inset 0 0 6px rgba(255,255,255,0.25);
+}
+
+@keyframes zbotPulse {
+    0%   { transform: translate(-50%, -50%) scale(1); }
+    50%  { transform: translate(-50%, -50%) scale(1.28); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes zbotRingPulse {
+    0%   { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+    50%  { transform: translate(-50%, -50%) scale(1.18); opacity: 0.35; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+}
+
+#zbot-chatbox {
+    width: 350px;
+    height: 430px;
+    background: var(--bg-glass-dark);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.zbot-header {
+    padding: 14px;
+    background: var(--bg-glass);
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#zbot-close {
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: 0.2s;
+}
+
+#zbot-close:hover {
+    transform: rotate(90deg);
+    color: var(--danger);
+}
+
+#zbot-messages {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+}
+
+.zbot-msg {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 85%;
+    line-height: 1.4;
+    font-size: 0.92rem;
+}
+
+.zbot-user {
+    background: #3b82f6;
+    color: white;
+    margin-left: auto;
+    box-shadow: 0 2px 8px rgba(59,130,246,0.35);
+}
+
+.zbot-bot {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-color);
+}
+
+.zbot-input {
+    display: flex;
+    padding: 10px;
+    gap: 6px;
+    background: var(--bg-glass-dark);
+}
+
+#zbot-text {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-glass);
+    color: var(--text-primary);
+}
+
+#zbot-send {
+    padding: 10px 16px;
+    background: var(--primary);
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+#zbot-send:hover {
+    background: var(--primary-light);
+}
+
+#zbot-button.active::before,
+#zbot-button.active::after {
+    display: none;
+}
+
+#zbot-button.active {
+    background: rgba(0, 122, 255, 0.85) !important;
+    border-color: rgba(0,122,255,0.85) !important;
+    transform: scale(1.05);
+    box-shadow:
+        0 0 24px rgba(0,122,255,0.70),
+        inset 0 0 12px rgba(255,255,255,0.20);
+}
+
+#zbot-button.active {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.5);
+}
+
+#zbot-button.active::before,
+#zbot-button.active::after {
+    display: none !important;
 }

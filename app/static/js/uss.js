@@ -313,7 +313,6 @@ async function downloadFile(filename) {
     console.log('Downloading file:', filepath); // Debug log
     
     try {
-        // Open download in nieuw venster/tab
         window.open(`/api/uss/download?path=${encodeURIComponent(filepath)}`, '_blank');
     } catch (error) {
         console.error('Error downloading file:', error);
