@@ -11,6 +11,7 @@ Academiejaar 2025-2026 | Karel de Grote Hogeschool
 Student: Younes El Azzouzi | Applied Computer Science
 
 ---
+![Mainframe Poster](Mainframe-Web-ControlCenterPoster_Younes_El_Azzouzi.jpg)
 
 ## Overzicht
 
