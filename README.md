@@ -17,6 +17,19 @@ Student: Younes El Azzouzi | Applied Computer Science
 
 This project was developed as part of the mainframe curriculum at Karel de Grote University of Applied Sciences and Arts. It provides a modern web interface for managing IBM Z mainframe systems, making it easier for students and developers to work with datasets, jobs, and USS files without the traditional 3270 terminal.
 
+## Key Features
+
+- Modern Flask-based Web UI running on IBM z/OS USS  
+- Zowe CLI integration for datasets, jobs, and USS operations  
+- Browse HLQs, open PDS members, edit and save dataset content  
+- Create new members and submit JCL directly from the editor  
+- Job monitoring with spool viewer and return-code detection  
+- USS file manager with upload, download, and navigation  
+- Activity Dashboard logging all actions and timestamps  
+- Clean, responsive Apple-style interface  
+- UTF-8 compliant, modular architecture, easy deployment  
+- Designed to modernize core mainframe workflows… **and more!**
+
 ### Why this project?
 
 Traditional mainframe interfaces have a steep learning curve. This web application makes mainframe operations more accessible by:
