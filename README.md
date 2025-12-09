@@ -107,10 +107,9 @@ The application runs entirely on USS and uses Zowe CLI as a bridge to mainframe 
 
 ## Installation
 
-### 1. Clone the project
+### 1. Clone the repository
 
 ```bash
-cd /u/[your-userid]
 git clone https://github.com/yourusername/kdg-mainframe-control-center.git
 cd kdg-mainframe-control-center
 ```
@@ -272,24 +271,6 @@ MOCK_MODE=True
 
 This tests the interface without a mainframe connection.
 
-## Roadmap
-
-### Current version (v1.0)
-- ✅ Dataset browsing and editing
-- ✅ Job submission and monitoring
-- ✅ USS file management
-- ✅ Activity logging
-- ✅ Auto-save in editor
-
-### Future versions
-- [ ] Advanced search functionality
-- [ ] Batch operations
-- [ ] Job submission via editor
-- [ ] Syntax validation
-- [ ] Dark mode
-- [ ] User preferences
-- [ ] Export functionality
-
 ## FAQ
 
 **Q: Can I use this without mainframe access?**  
@@ -301,19 +282,12 @@ A: Chrome, Firefox, Safari, Edge (last 2 versions).
 **Q: How often is the activity feed updated?**  
 A: The activity feed is updated in real-time with each action. Job sync happens manually or automatically.
 
-**Q: Can I edit multiple datasets simultaneously?**  
-A: Not currently, but this is on the roadmap.
-
 ## Contributing
 
 This is an academic project developed at KdG. For questions or suggestions:
 
 1. Open an issue on GitHub
 2. Contact via [younes.elazzouzi@student.kdg.be](mailto:younes.elazzouzi@student.kdg.be)
-
-## License
-
-This project was developed for educational purposes at Karel de Grote University of Applied Sciences and Arts. License terms are still to be determined in consultation with the university.
 
 ## Acknowledgments
 
